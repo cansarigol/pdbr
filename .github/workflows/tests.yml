@@ -16,15 +16,12 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.6
-      - name: Install poetry and nox
+      - name: Install nox
         run: |
-          source $HOME/.poetry/env
-          pip install poetry nox
+          pip install nox
       - name: Run check
         run: |
-          source $HOME/.poetry/env
-          poetry run nox --sessions check
+          nox --sessions check
       - name: Run test
         run: |
-          source $HOME/.poetry/env
-          poetry run nox --sessions test
+          nox --sessions test
