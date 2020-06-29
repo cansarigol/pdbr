@@ -17,14 +17,14 @@ jobs:
         with:
           python-version: 3.6
       - name: Install poetry and nox
-        run: >-
-          python -m
-          pip install
-          poetry nox
-          --user
+        run: |
+          source $HOME/.poetry/env
+          pip install poetry nox
       - name: Run check
         run: |
-          python -m poetry run nox --sessions check
+          source $HOME/.poetry/env
+          poetry run nox --sessions check
       - name: Run test
         run: |
-          python -m poetry run nox --sessions test
+          source $HOME/.poetry/env
+          poetry run nox --sessions test
