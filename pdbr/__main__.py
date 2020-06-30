@@ -4,6 +4,7 @@ import typing
 from pdb import Pdb
 
 from rich.console import Console
+from rich.panel import Panel
 from rich.theme import Theme
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
@@ -26,6 +27,22 @@ class RichPdb(Pdb):
             {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
         )
         self._console = Console(file=self.stdout, theme=custom_theme)
+
+    def message(self, msg):
+        self._print(msg)
+
+    def do_help(self, arg):
+        super().do_help(arg)
+        self._print(
+            Panel(
+                "Click [bold][link=https://github.com/cansarigol/pdbr]link[/link][/]"
+                " for more!"
+            ),
+            style="warning",
+        )
+
+    do_help.__doc__ = Pdb.do_help.__doc__
+    do_h = do_help
 
     def _print(self, val, prefix=None, style=None):
         args = (prefix, val) if prefix else (val,)
