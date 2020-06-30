@@ -9,6 +9,18 @@ os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 
 
 class RichPdb(Pdb):
+    def __init__(
+        self,
+        completekey="tab",
+        stdin=None,
+        stdout=None,
+        skip=None,
+        nosigint=False,
+        readrc=True,
+    ):
+        super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
+        self.prompt = "(Pdbr) "
+
     def _print(self, val, prefix=None, style=None):
         args = (prefix, val) if prefix else (val,)
         kwargs = {"style": str(style)} if style else {}
