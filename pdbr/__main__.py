@@ -4,6 +4,7 @@ import typing
 from pdb import Pdb
 
 from rich.console import Console
+from rich.theme import Theme
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 
@@ -21,10 +22,15 @@ class RichPdb(Pdb):
         super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
         self.prompt = "(Pdbr) "
 
+        custom_theme = Theme(
+            {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
+        )
+        self._console = Console(file=self.stdout, theme=custom_theme)
+
     def _print(self, val, prefix=None, style=None):
         args = (prefix, val) if prefix else (val,)
         kwargs = {"style": str(style)} if style else {}
-        Console(file=self.stdout).print(*args, **kwargs)
+        self._console.print(*args, **kwargs)
 
     def do_rp(self, arg):
         """rp expression
@@ -32,7 +38,7 @@ class RichPdb(Pdb):
         """
         try:
             val = self._getval(arg)
-            style = "5"
+            style = "info"
             if isinstance(val, typing.Iterable) and len(val) == 2:
                 val, style = val
             self._print(val, style=style)
@@ -44,7 +50,7 @@ class RichPdb(Pdb):
             self._print(obj)
 
     def error(self, msg):
-        self._print(msg, prefix="***", style="red")
+        self._print(msg, prefix="***", style="danger")
 
 
 def set_trace(*, header=None, context=None):
