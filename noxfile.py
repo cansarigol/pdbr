@@ -1,5 +1,7 @@
 import nox
 
+nox.options.stop_on_first_error = True
+
 @nox.session
 def lint(session, reuse_venv=True):
     session.install('autoflake', 'isort', 'black')
@@ -19,4 +21,4 @@ def check(session, reuse_venv=True):
 @nox.session(python=["3.6", "3.7", "3.8"])
 def test(session, reuse_venv=True):
     session.install('pytest', 'rich')
-    session.run('pytest')
+    session.run('pytest', '-s')
