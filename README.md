@@ -1,6 +1,6 @@
 # pdbr
 
-[Rich](https://github.com/willmcgugan/rich) is a great library for terminal output. Hence I wanted to use it with PDB.
+[Rich](https://github.com/willmcgugan/rich) is a great library for terminal output. In order to make the PDB results more colorful.
 
 ## Installing
 
