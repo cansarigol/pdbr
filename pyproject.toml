@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.1.6"
+version = "0.1.7"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -10,7 +10,7 @@ readme = "README.md"
 homepage = "https://github.com/cansarigol/pdbr"
 repository = "https://github.com/cansarigol/pdbr"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",    
+    "Development Status :: 4 - Beta",    
     "Intended Audience :: Developers",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
