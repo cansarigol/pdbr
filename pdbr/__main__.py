@@ -86,3 +86,10 @@ if os.environ.get("USE_RICH_TRACEBACK", False):
 
     theme = os.environ.get("PYGMENTS_THEME", "friendly")
     install(theme=theme)
+
+
+if __name__ == "__main__":
+    import pdb
+
+    pdb.Pdb = RichPdb
+    pdb.main()
