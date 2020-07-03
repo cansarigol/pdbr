@@ -1,3 +1,3 @@
-from .__main__ import RichPdb, run, set_trace
+from pdbr.__main__ import run, set_trace
 
-__all__ = ["set_trace", "run", "RichPdb"]
+__all__ = ["set_trace", "run"]

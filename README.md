@@ -28,22 +28,19 @@ or just import pdbr
 import pdbr
 ```
 
-## Traceback
-In order to use Rich's traceback, set **USE_RICH_TRACEBACK** as True.
+## Config
+In order to use Rich's traceback, style, and theme, set **setup.cfg**.
 
-```python
-import pdbr
-
-os.environ["USE_RICH_TRACEBACK"] = "True"
-
+```
+[pdbr]
+style = yellow
+use_traceback = True
+theme = friendly
 ```
 
 ## Samples
 ### The difference from PDB
 ![](/samples/sample1.png)
 
-### Style sample
-![](/samples/sample2.png)
-
 ### Traceback
-![](/samples/sample3.png)
+![](/samples/sample2.png)
