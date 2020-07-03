@@ -36,8 +36,6 @@ import pdbr
 
 os.environ["USE_RICH_TRACEBACK"] = "True"
 
-# use PYGMENTS_THEME env to change theme of traceback.
-os.environ["PYGMENTS_THEME"] = "monokai"
 ```
 
 ## Samples

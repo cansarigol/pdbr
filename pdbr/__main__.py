@@ -49,19 +49,6 @@ class RichPdb(Pdb):
         kwargs = {"style": str(style)} if style else {}
         self._console.print(*args, **kwargs)
 
-    def do_rp(self, arg):
-        """rp expression
-        Rich-print with style.
-        """
-        try:
-            val = self._getval(arg)
-            style = "info"
-            if isinstance(val, typing.Iterable) and len(val) == 2:
-                val, style = val
-            self._print(val, style=style)
-        except BaseException:
-            pass
-
     def displayhook(self, obj):
         if obj is not None:
             self._print(obj)
