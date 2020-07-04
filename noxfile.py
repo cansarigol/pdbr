@@ -20,5 +20,5 @@ def check(session, reuse_venv=True):
 
 @nox.session(python=["3.6", "3.7", "3.8"])
 def test(session, reuse_venv=True):
-    session.install('pytest', 'rich')
-    session.run('pytest', '-s')
+    session.install('pytest', 'pytest-cov', 'rich')
+    session.run('pytest', '--cov-report', 'term-missing', '--cov=pdbr', 'tests')
