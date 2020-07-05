@@ -1,6 +1,5 @@
-from pdbr.__main__ import read_config, style
+from pdbr.__main__ import _read_config
 
 
 def test_read_config():
-    read_config()
-    assert style == "yellow"
+    assert _read_config() == ("yellow", None)

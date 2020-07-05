@@ -7,6 +7,9 @@ from rich.theme import Theme
 
 
 class RichPdb(Pdb):
+    _style = None
+    _theme = None
+
     def __init__(
         self,
         completekey="tab",
@@ -15,13 +18,9 @@ class RichPdb(Pdb):
         skip=None,
         nosigint=False,
         readrc=True,
-        style=None,
-        theme=None,
     ):
         super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
         self.prompt = "(Pdbr) "
-        self.style = style
-        self.theme = theme
 
         custom_theme = Theme(
             {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
@@ -53,7 +52,7 @@ class RichPdb(Pdb):
         syntax = Syntax.from_path(
             filename,
             line_numbers=True,
-            theme=self.theme or DEFAULT_THEME,
+            theme=self._theme or DEFAULT_THEME,
             line_range=line_range,
             highlight_lines=highlight_lines,
         )
@@ -70,7 +69,7 @@ class RichPdb(Pdb):
         syntax = Syntax.from_path(
             filename,
             line_numbers=True,
-            theme=self.theme or DEFAULT_THEME,
+            theme=self._theme or DEFAULT_THEME,
             highlight_lines=highlight_lines,
         )
         self._print(syntax)
@@ -90,7 +89,7 @@ class RichPdb(Pdb):
     def _print(self, val, prefix=None, style=None):
         args = (prefix, val) if prefix else (val,)
 
-        style = style or self.style
+        style = style or self._style
         kwargs = {"style": str(style)} if style else {}
 
         self._console.print(*args, **kwargs)
