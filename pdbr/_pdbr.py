@@ -2,6 +2,7 @@ from pdb import Pdb
 
 from rich.console import Console
 from rich.panel import Panel
+from rich.syntax import DEFAULT_THEME, Syntax
 from rich.theme import Theme
 
 
@@ -14,11 +15,13 @@ class RichPdb(Pdb):
         skip=None,
         nosigint=False,
         readrc=True,
-        default_style=None,
+        style=None,
+        theme=None,
     ):
         super().__init__(completekey, stdin, stdout, skip, nosigint, readrc)
         self.prompt = "(Pdbr) "
-        self.style = default_style
+        self.style = style
+        self.theme = theme
 
         custom_theme = Theme(
             {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
@@ -29,7 +32,8 @@ class RichPdb(Pdb):
         super().do_help(arg)
         self._print(
             Panel(
-                "Click [bold][link=https://github.com/cansarigol/pdbr]link[/link][/]"
+                "Click the "
+                "[bold][link=https://github.com/cansarigol/pdbr]link[/link][/]"
                 " for more!"
             ),
             style="warning",
@@ -37,6 +41,41 @@ class RichPdb(Pdb):
 
     do_help.__doc__ = Pdb.do_help.__doc__
     do_h = do_help
+
+    def do_list(self, arg):
+        """l(ist)
+        List 11 lines source code for the current file.
+        """
+        filename = self.curframe.f_code.co_filename
+        first = max(1, self.curframe.f_lineno - 5)
+        line_range = first, first + 10
+        highlight_lines = {self.curframe.f_lineno}
+        syntax = Syntax.from_path(
+            filename,
+            line_numbers=True,
+            theme=self.theme or DEFAULT_THEME,
+            line_range=line_range,
+            highlight_lines=highlight_lines,
+        )
+        self._print(syntax)
+
+    do_l = do_list
+
+    def do_longlist(self, arg):
+        """longlist | ll
+        List the whole source code for the current function or frame.
+        """
+        filename = self.curframe.f_code.co_filename
+        highlight_lines = {self.curframe.f_lineno}
+        syntax = Syntax.from_path(
+            filename,
+            line_numbers=True,
+            theme=self.theme or DEFAULT_THEME,
+            highlight_lines=highlight_lines,
+        )
+        self._print(syntax)
+
+    do_ll = do_longlist
 
     def displayhook(self, obj):
         if obj is not None:

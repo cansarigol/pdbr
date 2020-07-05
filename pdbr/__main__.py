@@ -6,11 +6,12 @@ from pdbr._pdbr import RichPdb
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 style = None
+theme = None
 
 
 def set_trace(*, header=None, context=None):
     read_config()
-    pdb = RichPdb(default_style=style)
+    pdb = RichPdb(style=style, theme=theme)
     if header is not None:
         pdb.message(header)
     pdb.set_trace(sys._getframe().f_back)
@@ -18,12 +19,12 @@ def set_trace(*, header=None, context=None):
 
 def run(statement, globals=None, locals=None):
     read_config()
-    RichPdb(default_style=style).run(statement, globals, locals)
+    RichPdb(style=style, theme=theme).run(statement, globals, locals)
 
 
 def read_config():
     global style
-    theme = "friendly"
+    global theme
 
     config = configparser.ConfigParser()
     config.sections()
