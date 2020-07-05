@@ -5,26 +5,41 @@ import sys
 from pdbr._pdbr import RichPdb
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
-style = None
-theme = None
 
 
-def set_trace(*, header=None, context=None):
-    read_config()
-    pdb = RichPdb(style=style, theme=theme)
+def _pdbr():
+    import pdb
+
+    style, theme = _read_config()
+
+    RichPdb._style = style
+    RichPdb._theme = theme
+    pdb.Pdb = RichPdb
+    return pdb
+
+
+def set_trace(*, header=None):
+    pdb_klass = _pdbr().Pdb()
     if header is not None:
-        pdb.message(header)
-    pdb.set_trace(sys._getframe().f_back)
+        pdb_klass.message(header)
+    pdb_klass.set_trace(sys._getframe().f_back)
 
 
 def run(statement, globals=None, locals=None):
-    read_config()
-    RichPdb(style=style, theme=theme).run(statement, globals, locals)
+    _pdbr().run(statement, globals, locals)
 
 
-def read_config():
-    global style
-    global theme
+def post_mortem(t=None):
+    _pdbr().post_mortem(t)
+
+
+def pm():
+    _pdbr().pm()
+
+
+def _read_config():
+    style = None
+    theme = None
 
     config = configparser.ConfigParser()
     config.sections()
@@ -40,12 +55,8 @@ def read_config():
 
                 install(theme=theme)
 
+    return style, theme
+
 
 if __name__ == "__main__":
-    import pdb
-
-    pdb.Pdb = RichPdb
-    pdb.main()
-
-
-read_config()
+    _pdbr().main()

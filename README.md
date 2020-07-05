@@ -42,5 +42,9 @@ theme = friendly
 ### The difference from PDB
 ![](/samples/sample1.png)
 
+![](/samples/sample2.png)
+
+![](/samples/sample4.png)
+
 ### Traceback
 ![](/samples/sample2.png)
