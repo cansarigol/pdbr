@@ -4,6 +4,7 @@
 
 [Rich](https://github.com/willmcgugan/rich) is a great library for terminal output. In order to make the PDB results more colorful.
 
+
 ## Installing
 
 Install with `pip` or your favorite PyPi package manager.
@@ -11,6 +12,7 @@ Install with `pip` or your favorite PyPi package manager.
 ```
 pip install pdbr
 ```
+
 
 ## Breakpoint
 
@@ -28,6 +30,7 @@ or just import pdbr
 import pdbr
 ```
 
+
 ## Config
 In order to use Rich's traceback, style, and theme, set **setup.cfg**.
 
@@ -36,6 +39,22 @@ In order to use Rich's traceback, style, and theme, set **setup.cfg**.
 style = yellow
 use_traceback = True
 theme = friendly
+```
+
+
+## Vscode user snippet
+
+To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**. Place the below snippet in json file.
+
+```json
+{
+  ...
+	"pdbr": {
+        "prefix": "pdbr",
+        "body": "import pdbr; pdbr.set_trace()",
+        "description": "Code snippet for pdbr debug"
+    },
+}
 ```
 
 ## Samples
