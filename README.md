@@ -46,10 +46,10 @@ theme = friendly
 
 To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**. Place the below snippet in json file.
 
-```json
+```
 {
   ...
-	"pdbr": {
+  "pdbr": {
         "prefix": "pdbr",
         "body": "import pdbr; pdbr.set_trace()",
         "description": "Code snippet for pdbr debug"
