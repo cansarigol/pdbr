@@ -30,7 +30,7 @@ or just import pdbr
 import pdbr
 ```
 
-## Nex command
+## New commands
 ### vars(v)
 it is used to get the local variables list.
 
@@ -63,7 +63,6 @@ To create or edit your own snippets, select **User Snippets** under **File > Pre
 ```
 
 ## Samples
-### The difference from PDB
 ![](/images/image1.png)
 
 ![](/images/image3.png)
