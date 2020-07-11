@@ -82,6 +82,20 @@ class RichPdb(Pdb):
 
     do_ll = do_longlist
 
+    def do_vars(self, arg):
+        """
+        List of local variables
+        """
+        self._print(
+            {
+                k: v
+                for k, v in self.curframe.f_locals.items()
+                if not k.startswith("__") and k != "pdbr"
+            }
+        )
+
+    do_v = do_vars
+
     def displayhook(self, obj):
         if obj is not None:
             self._print(obj)

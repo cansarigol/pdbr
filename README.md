@@ -30,6 +30,11 @@ or just import pdbr
 import pdbr
 ```
 
+## Nex command
+### vars(v)
+it is used to get the local variables list.
+
+![](/images/image5.png)
 
 ## Config
 In order to use Rich's traceback, style, and theme, set **setup.cfg**.
@@ -59,11 +64,11 @@ To create or edit your own snippets, select **User Snippets** under **File > Pre
 
 ## Samples
 ### The difference from PDB
-![](/samples/sample1.png)
+![](/images/image1.png)
 
-![](/samples/sample3.png)
+![](/images/image3.png)
 
-![](/samples/sample4.png)
+![](/images/image4.png)
 
 ### Traceback
-![](/samples/sample2.png)
+![](/images/image2.png)
