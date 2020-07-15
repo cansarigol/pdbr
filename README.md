@@ -48,7 +48,7 @@ theme = friendly
 ```
 
 ### History
-**store_history** this setting is used to keep and reload history even the prompt is closed and opened again. the entered value is *filename* of history.
+**store_history** setting is used to keep and reload history even the prompt is closed and opened again. the entered value is *filename* of history.
 ```
 [pdbr]
 ...
