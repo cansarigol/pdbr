@@ -4,6 +4,8 @@ import sys
 
 from pdbr._pdbr import RichPdb
 
+from .utils import set_history_file, set_traceback
+
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 
 
@@ -51,9 +53,9 @@ def _read_config():
             theme = config["pdbr"]["theme"]
         if "use_traceback" in config["pdbr"]:
             if config["pdbr"]["use_traceback"].lower() == "true":
-                from rich.traceback import install
-
-                install(theme=theme)
+                set_traceback(theme)
+        if "store_history" in config["pdbr"]:
+            set_history_file(config["pdbr"]["store_history"])
 
     return style, theme
 

@@ -37,6 +37,7 @@ it is used to get the local variables list.
 ![](/images/image5.png)
 
 ## Config
+### Style
 In order to use Rich's traceback, style, and theme, set **setup.cfg**.
 
 ```
@@ -46,6 +47,13 @@ use_traceback = True
 theme = friendly
 ```
 
+### History
+**store_history** this setting is used to keep and reload history even the prompt is closed and opened again. the entered value is *filename* of history.
+```
+[pdbr]
+...
+store_history=.pdbr_history
+```
 
 ## Vscode user snippet
 
