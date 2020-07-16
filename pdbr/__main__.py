@@ -56,6 +56,8 @@ def _read_config():
                 set_traceback(theme)
         if "store_history" in config["pdbr"]:
             set_history_file(config["pdbr"]["store_history"])
+        else:
+            set_history_file(".pdbr_history")
 
     return style, theme
 
