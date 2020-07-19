@@ -1,8 +1,10 @@
 from pdb import Pdb
 
+from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import DEFAULT_THEME, Syntax
+from rich.table import Table
 from rich.theme import Theme
 
 
@@ -86,13 +88,18 @@ class RichPdb(Pdb):
         """
         List of local variables
         """
-        self._print(
-            {
-                k: v
-                for k, v in self.curframe.f_locals.items()
-                if not k.startswith("__") and k != "pdbr"
-            }
-        )
+
+        table = Table(title="List of local variables", box=box.MINIMAL)
+
+        table.add_column("Variable", style="cyan", no_wrap=True)
+        table.add_column("Value", style="magenta", no_wrap=True)
+        table.add_column("Type", style="green")
+        [
+            table.add_row(k, str(v), str(type(v)))
+            for k, v in self.curframe.f_locals.items()
+            if not k.startswith("__") and k != "pdbr"
+        ]
+        self._print(table)
 
     do_v = do_vars
 
