@@ -1,3 +1,0 @@
-# Enable tab completion
-import rlcompleter as __rlcompleter
-pdbr._pdbr.RichPdb.complete = __rlcompleter.Completer(locals()).complete
