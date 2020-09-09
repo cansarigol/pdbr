@@ -22,7 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-rich = "^2.2.5"
+rich = "^6.0.0"
 
 [tool.poetry.dev-dependencies]
 nox = "^2020.5.24"
