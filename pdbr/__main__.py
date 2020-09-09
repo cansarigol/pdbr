@@ -42,7 +42,6 @@ def pm():
 def _read_config():
     style = None
     theme = None
-    is_history_file_set = False
 
     config = configparser.ConfigParser()
     config.sections()
@@ -57,10 +56,6 @@ def _read_config():
                 set_traceback(theme)
         if "store_history" in config["pdbr"]:
             set_history_file(config["pdbr"]["store_history"])
-            is_history_file_set = True
-
-    if is_history_file_set is False:
-        set_history_file(".pdbr_history")
 
     return style, theme
 
