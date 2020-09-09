@@ -1,6 +1,6 @@
 from pdb import Pdb
 
-from rich import box
+from rich import box, inspect
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import DEFAULT_THEME, Syntax
@@ -102,6 +102,24 @@ class RichPdb(Pdb):
         self._print(table)
 
     do_v = do_vars
+
+    def do_inspect(self, arg, all=False):
+        """inspect
+        Display the data / methods / docs for any Python object.
+        """
+        try:
+            inspect(self._getval(arg), console=self._console, methods=True, all=all)
+        except BaseException:
+            pass
+
+    def do_inspectall(self, arg):
+        """inspectall
+        Inspect with all to see all attributes.
+        """
+        self.do_inspect(arg, all=True)
+
+    do_i = do_inspect
+    do_ia = do_inspectall
 
     def displayhook(self, obj):
         if obj is not None:
