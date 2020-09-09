@@ -35,6 +35,8 @@ import pdbr
 it is used to get the local variables list.
 
 ![](/images/image5.png)
+### inspect(i) / inspectall(ia)
+In order to use [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector) as commands.
 
 ## Config
 ### Style
