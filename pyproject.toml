@@ -23,9 +23,13 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 rich = "^6.0.0"
+celery = {version = "^4.4.7", optional = true}
 
 [tool.poetry.dev-dependencies]
 nox = "^2020.5.24"
+
+[tool.poetry.extras]
+celery = ["celery"]
 
 [build-system]
 requires = ["poetry>=0.12"]

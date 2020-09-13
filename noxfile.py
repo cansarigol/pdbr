@@ -7,7 +7,7 @@ SOURCE_FILES = "pdbr", "tests", "noxfile.py"
 
 @nox.session
 def lint(session, reuse_venv=True):
-    session.install("autoflake", "isort==5.*", "black")
+    session.install("autoflake", "isort==5.*", "black>=20.8b1")
     session.run("autoflake", "--in-place", "--recursive", *SOURCE_FILES)
     session.run("black", *SOURCE_FILES)
     session.run("isort", *SOURCE_FILES)
@@ -15,7 +15,7 @@ def lint(session, reuse_venv=True):
 
 @nox.session
 def check(session, reuse_venv=True):
-    session.install("flake8", "isort==5.*", "black")
+    session.install("flake8", "isort==5.*", "black>=20.8b1")
     session.run("flake8", "pdbr", "tests")
     session.run("black", "--check", "--diff", *SOURCE_FILES)
     session.run("isort", "--check", "--diff", *SOURCE_FILES)

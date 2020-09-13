@@ -57,9 +57,30 @@ theme = friendly
 store_history=.pdbr_history
 ```
 
+### Celery
+In order to use **Celery** remote debugger with pdbr, use ```celery_set_trace``` as below sample. For more information see the [Celery user guide](https://docs.celeryproject.org/en/stable/userguide/debugging.html).
+
+```python
+from celery import Celery
+
+app = Celery('tasks', broker='pyamqp://guest@localhost//')
+
+@app.task
+def add(x, y):
+    
+    import pdbr; pdbr.celery_set_trace()
+    
+    return x + y
+
+```
+
+![](/images/image6.png)
+
 ## Vscode user snippet
 
-To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**. Place the below snippet in json file.
+To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**. 
+
+Place the below snippet in json file for **pdbr**.
 
 ```
 {
@@ -68,6 +89,19 @@ To create or edit your own snippets, select **User Snippets** under **File > Pre
         "prefix": "pdbr",
         "body": "import pdbr; pdbr.set_trace()",
         "description": "Code snippet for pdbr debug"
+    },
+}
+```
+
+For **Celery** debug.
+
+```
+{
+  ...
+  "rdbr": {
+        "prefix": "rdbr",
+        "body": "import pdbr; pdbr.celery_set_trace()",
+        "description": "Code snippet for Celery pdbr debug"
     },
 }
 ```

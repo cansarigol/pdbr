@@ -20,6 +20,17 @@ def _pdbr():
     return pdb
 
 
+def _rdbr():
+    pdb_klass = _pdbr().Pdb
+    try:
+        from celery.contrib import rdb
+    except ModuleNotFoundError as error:
+        raise type(error)("In order to install celery, use pdbr[celery]") from error
+
+    rdb.Pdb = pdb_klass
+    return rdb
+
+
 def set_trace(*, header=None):
     pdb_klass = _pdbr().Pdb()
     if header is not None:
@@ -37,6 +48,13 @@ def post_mortem(t=None):
 
 def pm():
     _pdbr().pm()
+
+
+def celery_set_trace(frame=None):
+    rdb_klass = _rdbr().Rdb()
+    if frame is None:
+        frame = getattr(sys, "_getframe")().f_back
+    return rdb_klass.set_trace(frame)
 
 
 def _read_config():
