@@ -243,7 +243,7 @@ description = "Pygments is a syntax highlighting package written in Python."
 name = "pygments"
 optional = false
 python-versions = ">=3.5"
-version = "2.7.0"
+version = "2.7.1"
 
 [[package]]
 category = "main"
@@ -259,7 +259,7 @@ description = "Render rich text, tables, progress bars, syntax highlighting, mar
 name = "rich"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "6.1.2"
+version = "7.0.0"
 
 [package.dependencies]
 colorama = ">=0.4.0,<0.5.0"
@@ -341,7 +341,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 celery = ["celery"]
 
 [metadata]
-content-hash = "6dc5592890f2a55a248943ee28a234cd6713203fedb48fbc782880ab6472a614"
+content-hash = "980b921339446b1e741606f8ba3f5922931bc240de119105c16903bf29afd8a9"
 lock-version = "1.0"
 python-versions = "^3.6"
 
@@ -411,16 +411,16 @@ py = [
     {file = "py-1.9.0.tar.gz", hash = "sha256:9ca6883ce56b4e8da7e79ac18787889fa5206c79dcc67fb065376cd2fe03f342"},
 ]
 pygments = [
-    {file = "Pygments-2.7.0-py3-none-any.whl", hash = "sha256:2df50d16b45b977217e02cba6c8422aaddb859f3d0570a88e09b00eafae89c6e"},
-    {file = "Pygments-2.7.0.tar.gz", hash = "sha256:2594e8fdb06fef91552f86f4fd3a244d148ab24b66042036e64f29a291515048"},
+    {file = "Pygments-2.7.1-py3-none-any.whl", hash = "sha256:307543fe65c0947b126e83dd5a61bd8acbd84abec11f43caebaf5534cbc17998"},
+    {file = "Pygments-2.7.1.tar.gz", hash = "sha256:926c3f319eda178d1bd90851e4317e6d8cdb5e292a3386aac9bd75eca29cf9c7"},
 ]
 pytz = [
     {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
     {file = "pytz-2020.1.tar.gz", hash = "sha256:c35965d010ce31b23eeb663ed3cc8c906275d6be1a34393a1d73a41febf4a048"},
 ]
 rich = [
-    {file = "rich-6.1.2-py3-none-any.whl", hash = "sha256:8555f056e76ee5dacecd9059e8f016abb85d3043274db6500b5f865b467005a2"},
-    {file = "rich-6.1.2.tar.gz", hash = "sha256:b316b5e8b167cd562d4315cf6c80399c253df444143e2053f593372bb2056ea4"},
+    {file = "rich-7.0.0-py3-none-any.whl", hash = "sha256:941c679ea681f0915eb986e48c38fa74f661f31bf815a3be696b27588469faf3"},
+    {file = "rich-7.0.0.tar.gz", hash = "sha256:291700f5c09fae83676f44781d01a292c39efad9505dd4724899646b794f9afb"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

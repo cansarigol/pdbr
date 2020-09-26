@@ -43,23 +43,27 @@ class RichPdb(Pdb):
     do_help.__doc__ = Pdb.do_help.__doc__
     do_h = do_help
 
+    def _get_syntax_for_list(self, line_range):
+        filename = self.curframe.f_code.co_filename
+        highlight_lines = {self.curframe.f_lineno}
+
+        return Syntax.from_path(
+            filename,
+            line_numbers=True,
+            theme=self._theme or DEFAULT_THEME,
+            line_range=line_range,
+            highlight_lines=highlight_lines,
+        )
+
     def do_list(self, arg):
         """l(ist)
         List 11 lines source code for the current file.
         """
         try:
-            filename = self.curframe.f_code.co_filename
             first = max(1, self.curframe.f_lineno - 5)
             line_range = first, first + 10
-            highlight_lines = {self.curframe.f_lineno}
-            syntax = Syntax.from_path(
-                filename,
-                line_numbers=True,
-                theme=self._theme or DEFAULT_THEME,
-                line_range=line_range,
-                highlight_lines=highlight_lines,
-            )
-            self._print(syntax)
+
+            self._print(self._get_syntax_for_list(line_range))
         except BaseException:
             self.error("could not get source code")
 
@@ -70,15 +74,7 @@ class RichPdb(Pdb):
         List the whole source code for the current function or frame.
         """
         try:
-            filename = self.curframe.f_code.co_filename
-            highlight_lines = {self.curframe.f_lineno}
-            syntax = Syntax.from_path(
-                filename,
-                line_numbers=True,
-                theme=self._theme or DEFAULT_THEME,
-                highlight_lines=highlight_lines,
-            )
-            self._print(syntax)
+            self._print(self._get_syntax_for_list(None))
         except BaseException:
             self.error("could not get source code")
 

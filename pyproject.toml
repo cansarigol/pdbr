@@ -22,7 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-rich = "^6.0.0"
+rich = "^7.0.0"
 celery = {version = "^4.4.7", optional = true}
 
 [tool.poetry.dev-dependencies]
