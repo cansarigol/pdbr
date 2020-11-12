@@ -3,6 +3,7 @@ from pdb import Pdb
 from rich import box, inspect
 from rich.console import Console
 from rich.panel import Panel
+from rich.pretty import pprint
 from rich.syntax import DEFAULT_THEME, Syntax
 from rich.table import Table
 from rich.theme import Theme
@@ -116,6 +117,15 @@ class RichPdb(Pdb):
 
     do_i = do_inspect
     do_ia = do_inspectall
+
+    def do_pp(self, arg):
+        """pp expression
+        Rich pretty print.
+        """
+        try:
+            pprint(self._getval(arg), console=self._console)
+        except BaseException:
+            pass
 
     def displayhook(self, obj):
         if obj is not None:
