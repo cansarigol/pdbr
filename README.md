@@ -32,7 +32,7 @@ import pdbr
 
 ## New commands
 ### vars(v)
-rich.pretty.pprinGet the local variables list.
+Get the local variables list.
 
 ### inspect(i) / inspectall(ia)
 [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
