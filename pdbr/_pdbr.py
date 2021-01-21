@@ -7,6 +7,7 @@ from rich.pretty import pprint
 from rich.syntax import DEFAULT_THEME, Syntax
 from rich.table import Table
 from rich.theme import Theme
+from rich.tree import Tree
 
 
 class RichPdb(Pdb):
@@ -56,6 +57,13 @@ class RichPdb(Pdb):
             highlight_lines=highlight_lines,
         )
 
+    def _get_variables(self):
+        return [
+            (k, str(v), str(type(v)))
+            for k, v in self.curframe.f_locals.items()
+            if not k.startswith("__") and k != "pdbr"
+        ]
+
     def do_list(self, arg):
         """l(ist)
         List 11 lines source code for the current file.
@@ -92,13 +100,35 @@ class RichPdb(Pdb):
         table.add_column("Value", style="magenta", no_wrap=True)
         table.add_column("Type", style="green")
         [
-            table.add_row(k, str(v), str(type(v)))
-            for k, v in self.curframe.f_locals.items()
-            if not k.startswith("__") and k != "pdbr"
+            table.add_row(variable, value, _type)
+            for variable, value, _type in self._get_variables()
         ]
         self._print(table)
 
     do_v = do_vars
+
+    def do_varstree(self, arg):
+        """
+        List of local variables in Rich.Tree
+        """
+        tree_key = ""
+        type_tree = None
+        tree = Tree("Variables")
+
+        for variable, value, _type in sorted(
+            self._get_variables(), key=lambda item: (item[2], item[0])
+        ):
+            if tree_key != _type:
+                if tree_key != "":
+                    tree.add(type_tree, style="bold green")
+                type_tree = Tree(_type)
+                tree_key = _type
+            type_tree.add(f"{variable}: {value}", style="magenta")
+        if type_tree:
+            tree.add(type_tree, style="bold green")
+        self._print(tree)
+
+    do_vt = do_varstree
 
     def do_inspect(self, arg, all=False):
         """inspect

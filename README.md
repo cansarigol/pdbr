@@ -32,10 +32,15 @@ import pdbr
 
 ## New commands
 ### vars(v)
-Get the local variables list.
+Get the local variables list as table.
+
+### varstree(vt)
+Get the local variables list as tree.
 
 ### inspect(i) / inspectall(ia)
 [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
+
+![](/images/image5.png)
 
 ### pp
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
