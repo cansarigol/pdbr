@@ -64,7 +64,7 @@ theme = friendly
 store_history=.pdbr_history
 ```
 
-### Celery
+## Celery
 In order to use **Celery** remote debugger with pdbr, use ```celery_set_trace``` as below sample. For more information see the [Celery user guide](https://docs.celeryproject.org/en/stable/userguide/debugging.html).
 
 ```python
@@ -82,6 +82,18 @@ def add(x, y):
 ```
 
 ![](/images/image6.png)
+
+
+## IPython Terminal
+
+Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with it like below or just install your own version.
+
+```
+pip install pdbr[ipython]
+```
+
+#### Django shell sample
+![](/images/image7.png)
 
 ## Vscode user snippet
 
