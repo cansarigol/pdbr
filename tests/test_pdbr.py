@@ -1,26 +1,32 @@
-from pdbr._pdbr import RichPdb
+import pdb
+
+import pytest
+
+from pdbr._pdbr import rich_pdb_klass
 
 
-def test_prompt():
+@pytest.fixture
+def RichPdb():
+    return rich_pdb_klass(pdb.Pdb)
+
+
+def test_prompt(RichPdb):
     assert RichPdb().prompt == "(Pdbr) "
 
 
-def test_print(capsys):
-    pdb = RichPdb()
-    pdb._print("msg")
+def test_print(capsys, RichPdb):
+    RichPdb()._print("msg")
     captured = capsys.readouterr()
     assert captured.out == "msg\n"
 
 
-def test_print_error(capsys):
-    pdb = RichPdb()
-    pdb.error("error")
+def test_print_error(capsys, RichPdb):
+    RichPdb().error("error")
     captured = capsys.readouterr()
     assert captured.out == "*** error\n"
 
 
-def test_print_with_style(capsys):
-    pdb = RichPdb()
-    pdb._print("msg", style="yellow")
+def test_print_with_style(capsys, RichPdb):
+    RichPdb()._print("msg", style="yellow")
     captured = capsys.readouterr()
     assert captured.out == "msg\n"

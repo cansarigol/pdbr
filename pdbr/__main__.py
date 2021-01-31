@@ -2,40 +2,50 @@ import configparser
 import os
 import sys
 
-from pdbr._pdbr import RichPdb
+from pdbr._pdbr import rich_pdb_klass
 
 from .utils import set_history_file, set_traceback
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 
 
+def debugger_cls():
+    try:
+        from IPython.terminal.debugger import TerminalPdb
+
+        return TerminalPdb
+    except BaseException:
+        from pdb import Pdb
+
+        return Pdb
+
+
 def _pdbr():
-    import pdb
+    pdb_cls = debugger_cls()
+    RichPdb = rich_pdb_klass(pdb_cls)
 
     style, theme = _read_config()
-
     RichPdb._style = style
     RichPdb._theme = theme
-    pdb.Pdb = RichPdb
-    return pdb
+    return RichPdb()
 
 
 def _rdbr():
-    pdb_klass = _pdbr().Pdb
+    pdb_cls = _pdbr()
     try:
         from celery.contrib import rdb
     except ModuleNotFoundError as error:
         raise type(error)("In order to install celery, use pdbr[celery]") from error
 
-    rdb.Pdb = pdb_klass
+    rdb.Pdb = pdb_cls
     return rdb
 
 
 def set_trace(*, header=None):
-    pdb_klass = _pdbr().Pdb()
+    pdb_cls = _pdbr()
     if header is not None:
-        pdb_klass.message(header)
-    pdb_klass.set_trace(sys._getframe().f_back)
+        pdb_cls.message(header)
+    pdb_cls.set_trace(sys._getframe().f_back)
 
 
 def run(statement, globals=None, locals=None):
@@ -51,10 +61,10 @@ def pm():
 
 
 def celery_set_trace(frame=None):
-    rdb_klass = _rdbr().Rdb()
+    pdb_cls = _rdbr().Rdb()
     if frame is None:
         frame = getattr(sys, "_getframe")().f_back
-    return rdb_klass.set_trace(frame)
+    return pdb_cls.set_trace(frame)
 
 
 def _read_config():
