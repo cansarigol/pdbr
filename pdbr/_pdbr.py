@@ -8,7 +8,7 @@ from rich.theme import Theme
 from rich.tree import Tree
 
 
-def rich_pdb_klass(base):
+def rich_pdb_klass(base, is_celery=False):
     class RichPdb(base):
         _style = None
         _theme = None
@@ -22,14 +22,17 @@ def rich_pdb_klass(base):
             nosigint=False,
             readrc=True,
         ):
-            super().__init__(
-                completekey=completekey,
-                stdin=stdin,
-                stdout=stdout,
-                skip=skip,
-                nosigint=nosigint,
-                readrc=readrc,
-            )
+            if is_celery:
+                super().__init__(out=stdout)
+            else:
+                super().__init__(
+                    completekey=completekey,
+                    stdin=stdin,
+                    stdout=stdout,
+                    skip=skip,
+                    nosigint=nosigint,
+                    readrc=readrc,
+                )
             self.prompt = "(Pdbr) "
 
             custom_theme = Theme(

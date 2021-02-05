@@ -20,25 +20,24 @@ def debugger_cls():
         return Pdb
 
 
-def _pdbr():
-    pdb_cls = debugger_cls()
-    RichPdb = rich_pdb_klass(pdb_cls)
-
+def __set_style_theme(RichPdb):
     style, theme = _read_config()
     RichPdb._style = style
     RichPdb._theme = theme
     return RichPdb()
 
 
+def _pdbr():
+    return __set_style_theme(rich_pdb_klass(debugger_cls()))
+
+
 def _rdbr():
-    pdb_cls = _pdbr()
     try:
         from celery.contrib import rdb
     except ModuleNotFoundError as error:
         raise type(error)("In order to install celery, use pdbr[celery]") from error
 
-    rdb.Pdb = pdb_cls
-    return rdb
+    return __set_style_theme(rich_pdb_klass(rdb.Rdb, is_celery=True))
 
 
 def set_trace(*, header=None):
@@ -61,7 +60,7 @@ def pm():
 
 
 def celery_set_trace(frame=None):
-    pdb_cls = _rdbr().Rdb()
+    pdb_cls = _rdbr()
     if frame is None:
         frame = getattr(sys, "_getframe")().f_back
     return pdb_cls.set_trace(frame)
