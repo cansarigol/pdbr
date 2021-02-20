@@ -45,6 +45,11 @@ Get the local variables list as tree.
 ### pp
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
 
+### nn, uu, dd
+Same with n(ext), u(p), d(own) commands + with local variables.
+
+![](/images/image8.png)
+
 ## Config
 ### Style
 In order to use Rich's traceback, style, and theme, set **setup.cfg**.

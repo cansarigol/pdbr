@@ -1,3 +1,6 @@
+import re
+from pdb import Pdb
+
 from rich import box, inspect
 from rich.console import Console
 from rich.panel import Panel
@@ -6,6 +9,11 @@ from rich.syntax import DEFAULT_THEME, Syntax
 from rich.table import Table
 from rich.theme import Theme
 from rich.tree import Tree
+
+from pdbr.utils import make_layout
+
+LOCAL_VARS_CMD = ("nn", "uu", "dd")
+ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
 def rich_pdb_klass(base, is_celery=False):
@@ -67,11 +75,14 @@ def rich_pdb_klass(base, is_celery=False):
             )
 
         def _get_variables(self):
-            return [
-                (k, str(v), str(type(v)))
-                for k, v in self.curframe.f_locals.items()
-                if not k.startswith("__") and k != "pdbr"
-            ]
+            try:
+                return [
+                    (k, str(v), str(type(v)))
+                    for k, v in self.curframe.f_locals.items()
+                    if not k.startswith("__") and k != "pdbr"
+                ]
+            except AttributeError:
+                return []
 
         def do_list(self, arg):
             """l(ist)
@@ -116,10 +127,7 @@ def rich_pdb_klass(base, is_celery=False):
 
         do_v = do_vars
 
-        def do_varstree(self, arg):
-            """
-            List of local variables in Rich.Tree
-            """
+        def get_varstree(self):
             tree_key = ""
             type_tree = None
             tree = Tree("Variables")
@@ -135,7 +143,13 @@ def rich_pdb_klass(base, is_celery=False):
                 type_tree.add(f"{variable}: {value}", style="magenta")
             if type_tree:
                 tree.add(type_tree, style="bold green")
-            self._print(tree)
+            return tree
+
+        def do_varstree(self, arg):
+            """
+            List of local variables in Rich.Tree
+            """
+            self._print(self.get_varstree())
 
         do_vt = do_varstree
 
@@ -166,6 +180,25 @@ def rich_pdb_klass(base, is_celery=False):
             except BaseException:
                 pass
 
+        def do_uu(self, arg):
+            """uu
+            Same with u(p) command + with local variables.
+            """
+            return self.do_up(arg)
+
+        def do_dd(self, arg):
+            """dd
+            Same with d(own) command + with local variables.
+            """
+            return self.do_down(arg)
+
+        def do_nn(self, arg):
+            """nn
+            Same with n(ext) command + with local variables.
+            """
+
+            return self.do_next(arg)
+
         def displayhook(self, obj):
             if obj is not None:
                 self._print(obj)
@@ -174,7 +207,13 @@ def rich_pdb_klass(base, is_celery=False):
             self._print(msg, prefix="***", style="danger")
 
         def message(self, msg):
-            self._print(msg)
+            if self.lastcmd in LOCAL_VARS_CMD:
+                layout = make_layout()
+                layout["left"].update(msg)
+                layout["right"].update(Panel(self.get_varstree()))
+                self._print(layout)
+            else:
+                self._print(msg)
 
         def _print(self, val, prefix=None, style=None):
             args = (prefix, val) if prefix else (val,)
@@ -183,5 +222,22 @@ def rich_pdb_klass(base, is_celery=False):
             kwargs = {"style": str(style)} if style else {}
 
             self._console.print(*args, **kwargs)
+
+        def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
+            """
+            Remove ipython color format.
+            """
+            if base == Pdb:
+                Pdb.print_stack_entry(self, frame_lineno, prompt_prefix)
+                return
+            self.message(
+                ANSI_ESCAPE.sub("", self.format_stack_entry(frame_lineno, "", context))
+            )
+
+            # vds: >>
+            frame, lineno = frame_lineno
+            filename = frame.f_code.co_filename
+            self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
+            # vds: <<
 
     return RichPdb

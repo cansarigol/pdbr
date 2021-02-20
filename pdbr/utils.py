@@ -1,3 +1,6 @@
+from rich.layout import Layout
+
+
 def set_history_file(filename):
     import atexit
     import os
@@ -11,6 +14,14 @@ def set_history_file(filename):
         pass
 
     atexit.register(readline.write_history_file, histfile)
+
+
+def make_layout():
+    layout = Layout()
+    left_layout = Layout(name="left", ratio=2)
+    right_layout = Layout(name="right")
+    layout.split(left_layout, right_layout, direction="horizontal")
+    return layout
 
 
 def set_traceback(theme):
