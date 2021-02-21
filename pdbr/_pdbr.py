@@ -16,7 +16,7 @@ LOCAL_VARS_CMD = ("nn", "uu", "dd")
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
-def rich_pdb_klass(base, is_celery=False):
+def rich_pdb_klass(base, is_celery=False, context=None):
     class RichPdb(base):
         _style = None
         _theme = None
@@ -30,19 +30,25 @@ def rich_pdb_klass(base, is_celery=False):
             nosigint=False,
             readrc=True,
         ):
-            if is_celery:
-                super().__init__(out=stdout)
-            else:
-                super().__init__(
-                    completekey=completekey,
-                    stdin=stdin,
-                    stdout=stdout,
-                    skip=skip,
-                    nosigint=nosigint,
-                    readrc=readrc,
-                )
-            self.prompt = "(Pdbr) "
+            init_kwargs = (
+                {"out": stdout}
+                if is_celery
+                else {
+                    "completekey": completekey,
+                    "stdin": stdin,
+                    "stdout": stdout,
+                    "skip": skip,
+                    "nosigint": nosigint,
+                    "readrc": readrc,
+                }
+            )
+            if context is not None:
+                if base == Pdb:
+                    raise ValueError("Context can only be used with IPython")
+                init_kwargs["context"] = context
+            super().__init__(**init_kwargs)
 
+            self.prompt = "(Pdbr) "
             custom_theme = Theme(
                 {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
             )

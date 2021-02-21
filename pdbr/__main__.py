@@ -27,8 +27,8 @@ def __set_style_theme(RichPdb):
     return RichPdb()
 
 
-def _pdbr():
-    return __set_style_theme(rich_pdb_klass(debugger_cls()))
+def _pdbr(context=None):
+    return __set_style_theme(rich_pdb_klass(debugger_cls(), context=context))
 
 
 def _rdbr():
@@ -40,8 +40,8 @@ def _rdbr():
     return __set_style_theme(rich_pdb_klass(rdb.Rdb, is_celery=True))
 
 
-def set_trace(*, header=None):
-    pdb_cls = _pdbr()
+def set_trace(*, header=None, context=None):
+    pdb_cls = _pdbr(context=context)
     if header is not None:
         pdb_cls.message(header)
     pdb_cls.set_trace(sys._getframe().f_back)

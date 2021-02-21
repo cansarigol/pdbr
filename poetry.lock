@@ -198,7 +198,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 
 [[package]]
 name = "ipython"
-version = "7.16.0"
+version = "7.16.1"
 description = "IPython: Productive Interactive Computing"
 category = "main"
 optional = true
@@ -474,7 +474,7 @@ ipython = ["ipython", "jedi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "f6ce52d286582964f48e5f0dff273ca0a2f91dfabfd89d5afe8b01fd6a7b5eaa"
+content-hash = "371bc1e93a3e21eee6199c6b9b6afee6603dd9c9795b39940c9dd8323fddbecd"
 
 [metadata.files]
 amqp = [
@@ -542,8 +542,8 @@ importlib-resources = [
     {file = "importlib_resources-5.1.0.tar.gz", hash = "sha256:bfdad047bce441405a49cf8eb48ddce5e56c696e185f59147a8b79e75e9e6380"},
 ]
 ipython = [
-    {file = "ipython-7.16.0-py3-none-any.whl", hash = "sha256:27a9c6e0071ad4e8ffb299e31d139b79a405685cb7e551bd32e72279396c2f2f"},
-    {file = "ipython-7.16.0.tar.gz", hash = "sha256:075e90eee2501c7ecd5fbccb91659c6658e3619231b93150b5f2eadfd6b81615"},
+    {file = "ipython-7.16.1-py3-none-any.whl", hash = "sha256:2dbcc8c27ca7d3cfe4fcdff7f45b27f9a8d3edfa70ff8024a71c7a8eb5f09d64"},
+    {file = "ipython-7.16.1.tar.gz", hash = "sha256:9f4fcb31d3b2c533333893b9172264e4821c1ac91839500f31bd43f2c59b3ccf"},
 ]
 ipython-genutils = [
     {file = "ipython_genutils-0.2.0-py2.py3-none-any.whl", hash = "sha256:72dd37233799e619666c9f639a9da83c34013a73e8bbc79a7a6348d93c61fab8"},
