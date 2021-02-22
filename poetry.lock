@@ -474,7 +474,7 @@ ipython = ["ipython", "jedi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "371bc1e93a3e21eee6199c6b9b6afee6603dd9c9795b39940c9dd8323fddbecd"
+content-hash = "31827811d37d80ba1403d898df18b61f91709ff26903ba22bc8804fee134bbb4"
 
 [metadata.files]
 amqp = [
