@@ -97,7 +97,7 @@ Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with 
 pip install pdbr[ipython]
 ```
 ### Cli
-`pdbr` command in terminal start an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
+Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample
 ![](/images/image9.png)
 ### Terminal
