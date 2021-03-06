@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.4.0"
+version = "0.4.1"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -36,7 +36,7 @@ celery = ["celery"]
 ipython = ["ipython", "jedi"]
 
 [tool.poetry.scripts]
-pdbr = 'pdbr_shell:cli'
+pdbr = 'pdbr.pdbr_shell:cli'
 
 [build-system]
 requires = ["poetry>=1.0.0"]
