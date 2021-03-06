@@ -1,6 +1,7 @@
 import re
 from pdb import Pdb
 
+from icecream import ic
 from rich import box, inspect
 from rich.console import Console
 from rich.panel import Panel
@@ -185,6 +186,19 @@ def rich_pdb_klass(base, is_celery=False, context=None):
                 pprint(self._getval(arg), console=self._console)
             except BaseException:
                 pass
+
+        def do_icecream(self, arg):
+            """icecream(ic) expression
+            Icecream print.
+            """
+            try:
+                val = self._getval(arg)
+                ic.configureOutput(prefix="🍦 |> ")
+                self._print(ic.format(arg, val))
+            except BaseException:
+                pass
+
+        do_ic = do_icecream
 
         def do_uu(self, arg):
             """uu
