@@ -89,14 +89,18 @@ def add(x, y):
 ![](/images/image6.png)
 
 
-## IPython Terminal
+## IPython 
 
 Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with it like below or just install your own version.
 
 ```
 pip install pdbr[ipython]
 ```
-
+### Cli
+`pdbr` command in terminal start an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
+#### %debug magic sample
+![](/images/image9.png)
+### Terminal
 #### Django shell sample
 ![](/images/image7.png)
 

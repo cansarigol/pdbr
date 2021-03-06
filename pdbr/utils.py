@@ -28,3 +28,14 @@ def set_traceback(theme):
     from rich.traceback import install
 
     install(theme=theme)
+
+
+def debugger_cls():
+    try:
+        from IPython.terminal.debugger import TerminalPdb
+
+        return TerminalPdb
+    except BaseException:
+        from pdb import Pdb
+
+        return Pdb

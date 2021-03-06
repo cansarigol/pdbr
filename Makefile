@@ -6,3 +6,6 @@ test:
 
 celery:
 	celery -A tasks worker --loglevel=info
+
+build:
+	docker build -t pdbr .

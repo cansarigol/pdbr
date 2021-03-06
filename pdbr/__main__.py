@@ -4,20 +4,9 @@ import sys
 
 from pdbr._pdbr import rich_pdb_klass
 
-from .utils import set_history_file, set_traceback
+from .utils import debugger_cls, set_history_file, set_traceback
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
-
-
-def debugger_cls():
-    try:
-        from IPython.terminal.debugger import TerminalPdb
-
-        return TerminalPdb
-    except BaseException:
-        from pdb import Pdb
-
-        return Pdb
 
 
 def __set_style_theme(RichPdb):
