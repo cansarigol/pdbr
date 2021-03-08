@@ -31,23 +31,23 @@ import pdbr
 ```
 
 ## New commands
-### vars(v)
+### (v)ars
 Get the local variables list as table.
 
-### varstree(vt)
+### varstree | vt
 Get the local variables list as tree.
 
-### inspect(i) / inspectall(ia)
+### (i)nspect / inspectall | ia
 [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
 
 ![](/images/image5.png)
 
 ### pp
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
-### icecream(ic)
+### (ic)ecream
 🍦 [Icecream](https://github.com/gruns/icecream) print.
-### nn, uu, dd
-Same with n(ext), u(p), d(own) commands + with local variables.
+### nn, ss, uu, dd
+Same with n(ext), s(tep), u(p), d(own) commands + with local variables.
 
 ![](/images/image8.png)
 

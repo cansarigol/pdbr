@@ -14,7 +14,7 @@ from rich.tree import Tree
 
 from pdbr.utils import make_layout
 
-LOCAL_VARS_CMD = ("nn", "uu", "dd")
+LOCAL_VARS_CMD = ("nn", "uu", "dd", "ss")
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
@@ -221,6 +221,13 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             """
 
             return self.do_next(arg)
+
+        def do_ss(self, arg):
+            """ss
+            Same with s(tep) command + with local variables.
+            """
+
+            return self.do_step(arg)
 
         def displayhook(self, obj):
             if obj is not None:
