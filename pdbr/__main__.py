@@ -16,7 +16,7 @@ def __set_style_theme(RichPdb):
     return RichPdb()
 
 
-def _pdbr(context=None):
+def pdbr(context=None):
     return __set_style_theme(rich_pdb_klass(debugger_cls(), context=context))
 
 
@@ -30,22 +30,22 @@ def _rdbr():
 
 
 def set_trace(*, header=None, context=None):
-    pdb_cls = _pdbr(context=context)
+    pdb_cls = pdbr(context=context)
     if header is not None:
         pdb_cls.message(header)
     pdb_cls.set_trace(sys._getframe().f_back)
 
 
 def run(statement, globals=None, locals=None):
-    _pdbr().run(statement, globals, locals)
+    pdbr().run(statement, globals, locals)
 
 
 def post_mortem(t=None):
-    _pdbr().post_mortem(t)
+    pdbr().post_mortem(t)
 
 
 def pm():
-    _pdbr().pm()
+    pdbr().pm()
 
 
 def celery_set_trace(frame=None):
@@ -77,4 +77,4 @@ def _read_config():
 
 
 if __name__ == "__main__":
-    _pdbr().main()
+    pdbr().main()

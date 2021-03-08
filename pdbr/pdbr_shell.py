@@ -1,10 +1,10 @@
 import sys
+from functools import partial
 
-from pdbr._pdbr import rich_pdb_klass
-from pdbr.utils import debugger_cls
+from pdbr.__main__ import pdbr as pdbr_klass
 
 
-def cli():
+def shell():
     try:
         from IPython.terminal.interactiveshell import TerminalInteractiveShell
         from IPython.terminal.ipapp import TerminalIPythonApp
@@ -17,7 +17,7 @@ def cli():
     class PdbrTerminalInteractiveShell(TerminalInteractiveShell):
         @property
         def debugger_cls(self):
-            return rich_pdb_klass(debugger_cls())
+            return partial(pdbr_klass)
 
     class PdbrTerminalIPythonApp(TerminalIPythonApp):
         interactive_shell_class = Type(

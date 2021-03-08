@@ -2,7 +2,8 @@ import re
 from pdb import Pdb
 
 from icecream import ic
-from rich import box, inspect
+from rich import box
+from rich._inspect import Inspect
 from rich.console import Console
 from rich.panel import Panel
 from rich.pretty import pprint
@@ -57,14 +58,16 @@ def rich_pdb_klass(base, is_celery=False, context=None):
 
         def do_help(self, arg):
             super().do_help(arg)
-            self._print(
-                Panel(
-                    "Click the "
-                    "[bold][link=https://github.com/cansarigol/pdbr]link[/link][/]"
-                    " for more!"
-                ),
-                style="warning",
-            )
+            if not arg:
+                self._print(
+                    Panel(
+                        "Visit "
+                        "[bold][link=https://github.com/cansarigol/pdbr]"
+                        "https://github.com/cansarigol/pdbr[/link][/]"
+                        " for more!"
+                    ),
+                    style="warning",
+                )
 
         do_help.__doc__ = base.do_help.__doc__
         do_h = do_help
@@ -117,14 +120,14 @@ def rich_pdb_klass(base, is_celery=False, context=None):
         do_ll = do_longlist
 
         def do_vars(self, arg):
-            """
+            """v(ars)
             List of local variables
             """
 
             table = Table(title="List of local variables", box=box.MINIMAL)
 
-            table.add_column("Variable", style="cyan", no_wrap=True)
-            table.add_column("Value", style="magenta", no_wrap=True)
+            table.add_column("Variable", style="cyan")
+            table.add_column("Value", style="magenta")
             table.add_column("Type", style="green")
             [
                 table.add_row(variable, value, _type)
@@ -153,7 +156,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             return tree
 
         def do_varstree(self, arg):
-            """
+            """varstree | vt
             List of local variables in Rich.Tree
             """
             self._print(self.get_varstree())
@@ -161,16 +164,16 @@ def rich_pdb_klass(base, is_celery=False, context=None):
         do_vt = do_varstree
 
         def do_inspect(self, arg, all=False):
-            """inspect
+            """(i)nspect
             Display the data / methods / docs for any Python object.
             """
             try:
-                inspect(self._getval(arg), console=self._console, methods=True, all=all)
+                self._print(Inspect(self._getval(arg), methods=True, all=all))
             except BaseException:
                 pass
 
         def do_inspectall(self, arg):
-            """inspectall
+            """inspectall | ia
             Inspect with all to see all attributes.
             """
             self.do_inspect(arg, all=True)
@@ -188,7 +191,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
                 pass
 
         def do_icecream(self, arg):
-            """icecream(ic) expression
+            """ic(ecream) expression
             Icecream print.
             """
             try:
