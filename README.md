@@ -44,8 +44,8 @@ Get the local variables list as tree.
 
 ### pp
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
-### icecream
-[🍦 Icecream](https://github.com/gruns/icecream) print.
+### icecream(ic)
+🍦 [Icecream](https://github.com/gruns/icecream) print.
 ### nn, uu, dd
 Same with n(ext), u(p), d(own) commands + with local variables.
 
