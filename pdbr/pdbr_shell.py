@@ -1,7 +1,6 @@
 import sys
-from functools import partial
 
-from pdbr.__main__ import pdbr as pdbr_klass
+from pdbr.utils import pdbr_cls
 
 
 def shell():
@@ -17,7 +16,7 @@ def shell():
     class PdbrTerminalInteractiveShell(TerminalInteractiveShell):
         @property
         def debugger_cls(self):
-            return partial(pdbr_klass)
+            return pdbr_cls(return_instance=False)
 
     class PdbrTerminalIPythonApp(TerminalIPythonApp):
         interactive_shell_class = Type(

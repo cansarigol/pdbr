@@ -5,14 +5,13 @@ from icecream import ic
 from rich import box
 from rich._inspect import Inspect
 from rich.console import Console
+from rich.layout import Layout
 from rich.panel import Panel
 from rich.pretty import pprint
 from rich.syntax import DEFAULT_THEME, Syntax
 from rich.table import Table
 from rich.theme import Theme
 from rich.tree import Tree
-
-from pdbr.utils import make_layout
 
 LOCAL_VARS_CMD = ("nn", "uu", "dd", "ss")
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
@@ -236,9 +235,18 @@ def rich_pdb_klass(base, is_celery=False, context=None):
         def error(self, msg):
             self._print(msg, prefix="***", style="danger")
 
+        def _make_layout(self):
+            if not hasattr(self, "layout"):
+                layout = Layout()
+                left_layout = Layout(name="left", ratio=2)
+                right_layout = Layout(name="right")
+                layout.split(left_layout, right_layout, direction="horizontal")
+                self.layout = layout
+            return self.layout
+
         def message(self, msg):
             if self.lastcmd in LOCAL_VARS_CMD:
-                layout = make_layout()
+                layout = self._make_layout()
                 layout["left"].update(msg)
                 layout["right"].update(Panel(self.get_varstree()))
                 self._print(layout)
@@ -257,7 +265,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             """
             Remove ipython color format.
             """
-            if base == Pdb:
+            if base == Pdb or is_celery:
                 Pdb.print_stack_entry(self, frame_lineno, prompt_prefix)
                 return
             self.message(

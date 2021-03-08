@@ -1,5 +1,5 @@
-from pdbr.__main__ import _read_config
+from pdbr.utils import read_config
 
 
 def test_read_config():
-    assert _read_config() == ("dim", None)
+    assert read_config() == ("dim", None)
