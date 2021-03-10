@@ -53,7 +53,9 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             custom_theme = Theme(
                 {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
             )
-            self._console = Console(file=self.stdout, theme=custom_theme)
+            self._console = Console(
+                file=self.stdout, theme=custom_theme, style=self._style
+            )
 
         def do_help(self, arg):
             super().do_help(arg)
@@ -255,8 +257,6 @@ def rich_pdb_klass(base, is_celery=False, context=None):
 
         def _print(self, val, prefix=None, style=None):
             args = (prefix, val) if prefix else (val,)
-
-            style = style or self._style
             kwargs = {"style": str(style)} if style else {}
 
             self._console.print(*args, **kwargs)

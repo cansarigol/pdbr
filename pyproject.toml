@@ -37,7 +37,8 @@ celery = ["celery"]
 ipython = ["ipython", "jedi"]
 
 [tool.poetry.scripts]
-pdbr = 'pdbr.pdbr_shell:shell'
+pdbr = 'pdbr.cli:shell'
+pdbr_telnet = 'pdbr.cli:telnet'
 
 [build-system]
 requires = ["poetry>=1.0.0"]

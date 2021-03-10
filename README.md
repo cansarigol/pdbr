@@ -86,7 +86,8 @@ def add(x, y):
     return x + y
 
 ```
-
+#### Telnet
+Instead of using `telnet` or `nc`, in terms of using pdbr style, `pdbr_telnet` command can be used.
 ![](/images/image6.png)
 
 
@@ -97,7 +98,7 @@ Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with 
 ```
 pip install pdbr[ipython]
 ```
-### Cli
+### Shell
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample
 ![](/images/image9.png)
