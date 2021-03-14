@@ -74,6 +74,12 @@ def pdbr_cls(context=None, return_instance=True):
 def rdbr_cls(return_instance=True):
     try:
         from celery.contrib import rdb
+
+        rdb.BANNER = """\
+{self.ident}: Type `pdbr_telnet {self.host} {self.port}` to connect
+
+{self.ident}: Waiting for client...
+"""
     except ModuleNotFoundError as error:
         raise type(error)("In order to install celery, use pdbr[celery]") from error
 
