@@ -1,3 +1,4 @@
+import io
 import re
 from pdb import Pdb
 
@@ -15,6 +16,10 @@ from rich.tree import Tree
 
 LOCAL_VARS_CMD = ("nn", "uu", "dd", "ss")
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+
+
+class AsciiStdout(io.TextIOWrapper):
+    pass
 
 
 def rich_pdb_klass(base, is_celery=False, context=None):
@@ -50,12 +55,22 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             super().__init__(**init_kwargs)
 
             self.prompt = "(Pdbr) "
-            custom_theme = Theme(
-                {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
-            )
-            self._console = Console(
-                file=self.stdout, theme=custom_theme, style=self._style
-            )
+
+        @property
+        def console(self):
+            if not hasattr(self, "_console"):
+                self._console = Console(
+                    file=(
+                        AsciiStdout(buffer=self.stdout.buffer, encoding="ascii")
+                        if is_celery
+                        else self.stdout
+                    ),
+                    theme=Theme(
+                        {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
+                    ),
+                    style=self._style,
+                )
+            return self._console
 
         def do_help(self, arg):
             super().do_help(arg)
@@ -187,7 +202,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             Rich pretty print.
             """
             try:
-                pprint(self._getval(arg), console=self._console)
+                pprint(self._getval(arg), console=self.console)
             except BaseException:
                 pass
 
@@ -259,7 +274,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             args = (prefix, val) if prefix else (val,)
             kwargs = {"style": str(style)} if style else {}
 
-            self._console.print(*args, **kwargs)
+            self.console.print(*args, **kwargs)
 
         def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
             """

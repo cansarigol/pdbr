@@ -56,7 +56,7 @@ def telnet():
             self.eof = not buf
             self.rawq = self.rawq + buf
 
-    console = pdbr_cls()._console
+    console = pdbr_cls().console
     sys.stdout = FileProxy(console, sys.stdout)
     sys.stderr = FileProxy(console, sys.stderr)
     try:
