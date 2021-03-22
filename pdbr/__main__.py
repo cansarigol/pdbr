@@ -19,11 +19,19 @@ def run(statement, globals=None, locals=None):
 
 
 def post_mortem(t=None):
-    pdbr_cls().post_mortem(t)
+    t = t or sys.exc_info()[2]
+    if t is None:
+        raise ValueError(
+            "A valid traceback must be passed if no exception is being handled"
+        )
+
+    p = pdbr_cls(return_instance=True)
+    p.reset()
+    p.interaction(None, t)
 
 
 def pm():
-    pdbr_cls().pm()
+    post_mortem(sys.last_traceback)
 
 
 def celery_set_trace(frame=None):
