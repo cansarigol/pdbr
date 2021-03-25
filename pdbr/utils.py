@@ -64,14 +64,14 @@ def debugger_cls(klass=None, context=None, is_celery=False):
     return RichPdb
 
 
-def pdbr_cls(context=None, return_instance=True):
+def _pdbr_cls(context=None, return_instance=True):
     klass = debugger_cls(context=context)
     if return_instance:
         return klass()
     return klass
 
 
-def rdbr_cls(return_instance=True):
+def _rdbr_cls(return_instance=True):
     try:
         from celery.contrib import rdb
 

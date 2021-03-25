@@ -98,6 +98,14 @@ Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with 
 ```
 pip install pdbr[ipython]
 ```
+
+## pytest
+In order to user `pdbr` with pytest `--pdb` flag, add `addopts` setting in your pytest.ini.
+
+```
+[pytest]
+addopts: --pdbcls=pdbr:RichPdb
+```
 ### Shell
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample

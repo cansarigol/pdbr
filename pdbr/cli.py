@@ -3,7 +3,7 @@ from telnetlib import Telnet
 
 from rich.file_proxy import FileProxy
 
-from pdbr.utils import pdbr_cls
+from pdbr.__main__ import RichPdb
 
 
 def shell():
@@ -19,7 +19,7 @@ def shell():
     class PdbrTerminalInteractiveShell(TerminalInteractiveShell):
         @property
         def debugger_cls(self):
-            return pdbr_cls(return_instance=False)
+            return RichPdb
 
     class PdbrTerminalIPythonApp(TerminalIPythonApp):
         interactive_shell_class = Type(
@@ -37,7 +37,7 @@ def shell():
 
 
 def telnet():
-    pdb_cls = pdbr_cls()
+    pdb_cls = RichPdb()
     if len(sys.argv) < 3:
         pdb_cls.error("Usage : pdbr_telnet hostname port")
         sys.exit()
@@ -56,7 +56,7 @@ def telnet():
             self.eof = not buf
             self.rawq = self.rawq + buf
 
-    console = pdbr_cls().console
+    console = pdb_cls.console
     sys.stdout = FileProxy(console, sys.stdout)
     sys.stderr = FileProxy(console, sys.stderr)
     try:
