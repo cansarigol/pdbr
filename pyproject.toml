@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.4.7"
+version = "0.4.8"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -28,6 +28,7 @@ celery = {version = "^4.4.7", optional = true}
 ipython = {version = "7.16", optional = true}
 jedi = "0.17.2"
 icecream = "^2.1.0"
+pyreadline = "^2.1"
 
 [tool.poetry.dev-dependencies]
 nox = "^2020.5.24"

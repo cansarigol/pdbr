@@ -1,6 +1,7 @@
 import sys
 from telnetlib import Telnet
 
+from prompt_toolkit.history import FileHistory
 from rich.file_proxy import FileProxy
 
 from pdbr.__main__ import RichPdb
@@ -17,6 +18,12 @@ def shell():
         ) from error
 
     class PdbrTerminalInteractiveShell(TerminalInteractiveShell):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            if RichPdb._ipython_history_file:
+                self.debugger_history = FileHistory(RichPdb._ipython_history_file)
+
         @property
         def debugger_cls(self):
             return RichPdb

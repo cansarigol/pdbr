@@ -1,21 +1,30 @@
+import atexit
 import configparser
+import os
 
 from pdbr._pdbr import rich_pdb_klass
 
-
-def set_history_file(filename):
-    import atexit
-    import os
+try:
     import readline
+except ImportError:
+    from pyreadline import Readline
 
-    histfile = os.path.join(os.path.expanduser("~"), filename)
+    readline = Readline()
+
+
+def set_history_file(history_file):
+    """
+    This is just for Pdb,
+    For Ipython, look at RichPdb.pt_init
+    """
+
     try:
-        readline.read_history_file(histfile)
+        readline.read_history_file(history_file)
         readline.set_history_length(1000)
     except FileNotFoundError:
         pass
 
-    atexit.register(readline.write_history_file, histfile)
+    atexit.register(readline.write_history_file, history_file)
 
 
 def set_traceback(theme):
@@ -27,6 +36,7 @@ def set_traceback(theme):
 def read_config():
     style = None
     theme = None
+    store_history = ".pdbr_history"
 
     config = configparser.ConfigParser()
     config.sections()
@@ -40,9 +50,13 @@ def read_config():
             if config["pdbr"]["use_traceback"].lower() == "true":
                 set_traceback(theme)
         if "store_history" in config["pdbr"]:
-            set_history_file(config["pdbr"]["store_history"])
+            store_history = config["pdbr"]["store_history"]
 
-    return style, theme
+    history_file = os.path.join(os.path.expanduser("~"), store_history)
+    set_history_file(history_file)
+    ipython_history_file = f"{history_file}_ipython"
+
+    return style, theme, history_file, ipython_history_file
 
 
 def debugger_cls(klass=None, context=None, is_celery=False):
@@ -57,9 +71,11 @@ def debugger_cls(klass=None, context=None, is_celery=False):
             klass = Pdb
 
     RichPdb = rich_pdb_klass(klass, context=context, is_celery=is_celery)
-    style, theme = read_config()
+    style, theme, history_file, ipython_history_file = read_config()
     RichPdb._style = style
     RichPdb._theme = theme
+    RichPdb._history_file = history_file
+    RichPdb._ipython_history_file = ipython_history_file
 
     return RichPdb
 
