@@ -1,3 +1,4 @@
+import inspect
 import io
 import re
 from pdb import Pdb
@@ -62,7 +63,12 @@ def rich_pdb_klass(base, is_celery=False, context=None):
         def pt_init(self, pt_session_options=None):
             if self._ipython_history_file:
                 self.shell.debugger_history = FileHistory(self._ipython_history_file)
-            super().pt_init(pt_session_options)
+            func = super().pt_init
+            func_args = inspect.getargspec(super().pt_init).args
+            if "pt_session_options" in func_args:
+                func(pt_session_options)
+            else:
+                func()
 
         @property
         def console(self):
