@@ -65,7 +65,7 @@ def debugger_cls(klass=None, context=None, is_celery=False):
             from IPython.terminal.debugger import TerminalPdb
 
             klass = TerminalPdb
-        except BaseException:
+        except ImportError:
             from pdb import Pdb
 
             klass = Pdb

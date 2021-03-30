@@ -16,6 +16,13 @@ from rich.table import Table
 from rich.theme import Theme
 from rich.tree import Tree
 
+try:
+    from IPython.terminal.interactiveshell import TerminalInteractiveShell
+
+    TerminalInteractiveShell.simple_prompt = False
+except ImportError:
+    pass
+
 LOCAL_VARS_CMD = ("nn", "uu", "dd", "ss")
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
@@ -271,7 +278,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
                 layout = Layout()
                 left_layout = Layout(name="left", ratio=2)
                 right_layout = Layout(name="right")
-                layout.split(left_layout, right_layout, direction="horizontal")
+                layout.split(left_layout, right_layout, splitter="row")
                 self.layout = layout
             return self.layout
 

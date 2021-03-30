@@ -12,6 +12,8 @@ def shell():
         from IPython.terminal.interactiveshell import TerminalInteractiveShell
         from IPython.terminal.ipapp import TerminalIPythonApp
         from traitlets import Type
+
+        TerminalInteractiveShell.simple_prompt = False
     except ModuleNotFoundError as error:
         raise type(error)(
             "In order to use pdbr shell, install IPython with pdbr[ipython]"
