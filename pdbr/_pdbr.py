@@ -4,7 +4,6 @@ import re
 from pdb import Pdb
 
 from icecream import ic
-from prompt_toolkit.history import FileHistory
 from rich import box
 from rich._inspect import Inspect
 from rich.console import Console
@@ -68,6 +67,8 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             self.prompt = "(Pdbr) "
 
         def pt_init(self, pt_session_options=None):
+            from prompt_toolkit.history import FileHistory
+
             if self._ipython_history_file:
                 self.shell.debugger_history = FileHistory(self._ipython_history_file)
             func = super().pt_init

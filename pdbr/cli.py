@@ -1,7 +1,6 @@
 import sys
 from telnetlib import Telnet
 
-from prompt_toolkit.history import FileHistory
 from rich.file_proxy import FileProxy
 
 from pdbr.__main__ import RichPdb
@@ -11,6 +10,7 @@ def shell():
     try:
         from IPython.terminal.interactiveshell import TerminalInteractiveShell
         from IPython.terminal.ipapp import TerminalIPythonApp
+        from prompt_toolkit.history import FileHistory
         from traitlets import Type
 
         TerminalInteractiveShell.simple_prompt = False
