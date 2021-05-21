@@ -46,10 +46,6 @@ Get the local variables list as tree.
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
 ### (ic)ecream
 🍦 [Icecream](https://github.com/gruns/icecream) print.
-### nn, ss, uu, dd
-Same with n(ext), s(tep), u(p), d(own) commands + with local variables.
-
-![](/images/image8.png)
 
 ## Config
 ### Style

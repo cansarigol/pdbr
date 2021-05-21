@@ -9,8 +9,8 @@ os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 RichPdb = _pdbr_cls(return_instance=False)
 
 
-def set_trace(*, header=None, context=None):
-    pdb_cls = _pdbr_cls(context=context)
+def set_trace(*, header=None, context=None, show_layouts=True):
+    pdb_cls = _pdbr_cls(context=context, show_layouts=show_layouts)
     if header is not None:
         pdb_cls.message(header)
     pdb_cls.set_trace(sys._getframe().f_back)

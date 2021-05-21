@@ -1,5 +1,6 @@
 import inspect
 import io
+import os
 import re
 from pdb import Pdb
 
@@ -7,13 +8,15 @@ from icecream import ic
 from rich import box
 from rich._inspect import Inspect
 from rich.console import Console
-from rich.layout import Layout
 from rich.panel import Panel
 from rich.pretty import pprint
 from rich.syntax import DEFAULT_THEME, Syntax
 from rich.table import Table
+from rich.text import Text
 from rich.theme import Theme
 from rich.tree import Tree
+
+from pdbr.console_layout import ConsoleLayout
 
 try:
     from IPython.terminal.interactiveshell import TerminalInteractiveShell
@@ -22,7 +25,10 @@ try:
 except ImportError:
     pass
 
-LOCAL_VARS_CMD = ("nn", "uu", "dd", "ss")
+WITHOUT_LAYOUT_COMMANDS = (
+    "where",
+    "w",
+)
 ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
 
@@ -30,7 +36,7 @@ class AsciiStdout(io.TextIOWrapper):
     pass
 
 
-def rich_pdb_klass(base, is_celery=False, context=None):
+def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
     class RichPdb(base):
         _style = None
         _theme = None
@@ -105,12 +111,17 @@ def rich_pdb_klass(base, is_celery=False, context=None):
                         " for more!"
                     ),
                     style="warning",
+                    print_layout=False,
                 )
 
         do_help.__doc__ = base.do_help.__doc__
         do_h = do_help
 
-        def _get_syntax_for_list(self, line_range):
+        def _get_syntax_for_list(self, with_line_range=False):
+            line_range = None
+            if with_line_range:
+                first = max(1, self.curframe.f_lineno - 5)
+                line_range = first, first + 10
             filename = self.curframe.f_code.co_filename
             highlight_lines = {self.curframe.f_lineno}
 
@@ -137,10 +148,9 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             List 11 lines source code for the current file.
             """
             try:
-                first = max(1, self.curframe.f_lineno - 5)
-                line_range = first, first + 10
-
-                self._print(self._get_syntax_for_list(line_range))
+                self._print(
+                    self._get_syntax_for_list(with_line_range=True), print_layout=False
+                )
             except BaseException:
                 self.error("could not get source code")
 
@@ -151,17 +161,13 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             List the whole source code for the current function or frame.
             """
             try:
-                self._print(self._get_syntax_for_list(None))
+                self._print(self._get_syntax_for_list(), print_layout=False)
             except BaseException:
                 self.error("could not get source code")
 
         do_ll = do_longlist
 
-        def do_vars(self, arg):
-            """v(ars)
-            List of local variables
-            """
-
+        def get_varstable(self):
             table = Table(title="List of local variables", box=box.MINIMAL)
 
             table.add_column("Variable", style="cyan")
@@ -171,7 +177,13 @@ def rich_pdb_klass(base, is_celery=False, context=None):
                 table.add_row(variable, value, _type)
                 for variable, value, _type in self._get_variables()
             ]
-            self._print(table)
+            return table
+
+        def do_vars(self, arg):
+            """v(ars)
+            List of local variables
+            """
+            self._print(self.get_varstable(), print_layout=False)
 
         do_v = do_vars
 
@@ -197,7 +209,7 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             """varstree | vt
             List of local variables in Rich.Tree
             """
-            self._print(self.get_varstree())
+            self._print(self.get_varstree(), print_layout=False)
 
         do_vt = do_varstree
 
@@ -206,7 +218,10 @@ def rich_pdb_klass(base, is_celery=False, context=None):
             Display the data / methods / docs for any Python object.
             """
             try:
-                self._print(Inspect(self._getval(arg), methods=True, all=all))
+                self._print(
+                    Inspect(self._getval(arg), methods=True, all=all),
+                    print_layout=False,
+                )
             except BaseException:
                 pass
 
@@ -241,62 +256,64 @@ def rich_pdb_klass(base, is_celery=False, context=None):
 
         do_ic = do_icecream
 
-        def do_uu(self, arg):
-            """uu
-            Same with u(p) command + with local variables.
-            """
-            return self.do_up(arg)
-
-        def do_dd(self, arg):
-            """dd
-            Same with d(own) command + with local variables.
-            """
-            return self.do_down(arg)
-
-        def do_nn(self, arg):
-            """nn
-            Same with n(ext) command + with local variables.
-            """
-
-            return self.do_next(arg)
-
-        def do_ss(self, arg):
-            """ss
-            Same with s(tep) command + with local variables.
-            """
-
-            return self.do_step(arg)
-
         def displayhook(self, obj):
             if obj is not None:
                 self._print(obj)
 
         def error(self, msg):
-            self._print(msg, prefix="***", style="danger")
+            self._print(msg, prefix="***", style="danger", print_layout=False)
 
-        def _make_layout(self):
-            if not hasattr(self, "layout"):
-                layout = Layout()
-                left_layout = Layout(name="left", ratio=2)
-                right_layout = Layout(name="right")
-                layout.split(left_layout, right_layout, splitter="row")
-                self.layout = layout
-            return self.layout
+        def _format_stack_entry(self, frame_lineno):
+            stack_entry = Pdb.format_stack_entry(self, frame_lineno, "\n")
+            return stack_entry.replace(os.path.abspath(os.getcwd()), "")
+
+        def stack_trace(self):
+            stacks = []
+            try:
+                for frame_lineno in self.stack:
+                    frame, _ = frame_lineno
+                    if frame is self.curframe:
+                        prefix = "-> "
+                    else:
+                        prefix = "  "
+
+                    stack_entry = self._format_stack_entry(frame_lineno)
+                    first_line, _ = stack_entry.splitlines()
+                    text_body = Text(stack_entry)
+                    text_prefix = Text(prefix)
+                    text_body.stylize("bold", len(first_line), len(stack_entry))
+                    text_prefix.stylize("bold")
+                    stacks.append(Text.assemble(text_prefix, text_body))
+            except KeyboardInterrupt:
+                pass
+            return reversed(stacks)
 
         def message(self, msg):
-            if self.lastcmd in LOCAL_VARS_CMD:
-                layout = self._make_layout()
-                layout["left"].update(msg)
-                layout["right"].update(Panel(self.get_varstree()))
-                self._print(layout)
-            else:
-                self._print(msg)
+            self._print(msg)
 
-        def _print(self, val, prefix=None, style=None):
-            args = (prefix, val) if prefix else (val,)
+        def _print(self, val, prefix=None, style=None, print_layout=True):
+            if val == "--Return--":
+                return
+
             kwargs = {"style": str(style)} if style else {}
+            args = (prefix, val) if prefix else (val,)
+            if (
+                show_layouts
+                and print_layout
+                and self.lastcmd not in WITHOUT_LAYOUT_COMMANDS
+            ):
+                self._print_layout(*args, **kwargs)
+            else:
+                self.console.print(*args, **kwargs)
 
-            self.console.print(*args, **kwargs)
+        def _print_layout(self, val, **kwargs):
+            ConsoleLayout(self.console).print(
+                val,
+                code=self._get_syntax_for_list(with_line_range=True),
+                stack_trace=self.stack_trace(**kwargs),
+                vars=self.get_varstree(),
+                **kwargs,
+            )
 
         def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
             """

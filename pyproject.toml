@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.5.1"
+version = "0.5.2"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [

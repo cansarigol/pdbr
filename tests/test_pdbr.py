@@ -7,7 +7,7 @@ from pdbr._pdbr import rich_pdb_klass
 
 @pytest.fixture
 def RichPdb():
-    return rich_pdb_klass(pdb.Pdb)
+    return rich_pdb_klass(pdb.Pdb, show_layouts=False)
 
 
 def test_prompt(RichPdb):

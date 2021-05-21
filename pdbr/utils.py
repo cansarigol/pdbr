@@ -59,7 +59,7 @@ def read_config():
     return style, theme, history_file, ipython_history_file
 
 
-def debugger_cls(klass=None, context=None, is_celery=False):
+def debugger_cls(klass=None, context=None, is_celery=False, show_layouts=True):
     if klass is None:
         try:
             from IPython.terminal.debugger import TerminalPdb
@@ -70,7 +70,9 @@ def debugger_cls(klass=None, context=None, is_celery=False):
 
             klass = Pdb
 
-    RichPdb = rich_pdb_klass(klass, context=context, is_celery=is_celery)
+    RichPdb = rich_pdb_klass(
+        klass, context=context, is_celery=is_celery, show_layouts=show_layouts
+    )
     style, theme, history_file, ipython_history_file = read_config()
     RichPdb._style = style
     RichPdb._theme = theme
@@ -80,8 +82,8 @@ def debugger_cls(klass=None, context=None, is_celery=False):
     return RichPdb
 
 
-def _pdbr_cls(context=None, return_instance=True):
-    klass = debugger_cls(context=context)
+def _pdbr_cls(context=None, return_instance=True, show_layouts=True):
+    klass = debugger_cls(context=context, show_layouts=show_layouts)
     if return_instance:
         return klass()
     return klass
@@ -99,7 +101,7 @@ def _rdbr_cls(return_instance=True):
     except ModuleNotFoundError as error:
         raise type(error)("In order to install celery, use pdbr[celery]") from error
 
-    klass = debugger_cls(klass=rdb.Rdb, is_celery=True)
+    klass = debugger_cls(klass=rdb.Rdb, is_celery=True, show_layouts=False)
     if return_instance:
         return klass()
     return klass
