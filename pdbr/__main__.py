@@ -6,7 +6,7 @@ from .utils import _pdbr_cls, _rdbr_cls
 
 os.environ["PYTHONBREAKPOINT"] = "pdbr.set_trace"
 
-RichPdb = _pdbr_cls(return_instance=False)
+RichPdb = _pdbr_cls(return_instance=False, show_layouts=False)
 
 
 def set_trace(*, header=None, context=None, show_layouts=True):

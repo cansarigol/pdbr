@@ -168,6 +168,9 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         do_ll = do_longlist
 
         def get_varstable(self):
+            variables = self._get_variables()
+            if not variables:
+                return
             table = Table(title="List of local variables", box=box.MINIMAL)
 
             table.add_column("Variable", style="cyan")
@@ -175,7 +178,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             table.add_column("Type", style="green")
             [
                 table.add_row(variable, value, _type)
-                for variable, value, _type in self._get_variables()
+                for variable, value, _type in variables
             ]
             return table
 
@@ -188,12 +191,15 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         do_v = do_vars
 
         def get_varstree(self):
+            variables = self._get_variables()
+            if not variables:
+                return
             tree_key = ""
             type_tree = None
             tree = Tree("Variables")
 
             for variable, value, _type in sorted(
-                self._get_variables(), key=lambda item: (item[2], item[0])
+                variables, key=lambda item: (item[2], item[0])
             ):
                 if tree_key != _type:
                     if tree_key != "":
