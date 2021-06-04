@@ -25,3 +25,10 @@ def check(session, reuse_venv=True):
 def test(session, reuse_venv=True):
     session.install("pytest", "pytest-cov", "rich", "icecream", "prompt_toolkit")
     session.run("pytest", "--cov-report", "term-missing", "--cov=pdbr", "tests")
+
+
+@nox.session
+@nox.parametrize("django", ["1.8", "1.11", "2.0", "2.2", "3.0"])
+def django_test(session, django, reuse_venv=True):
+    session.install(f"django=={django}", "rich", "pytest")
+    session.run("python", "runtests.py")

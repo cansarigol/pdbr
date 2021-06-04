@@ -4,7 +4,6 @@ import os
 import re
 from pdb import Pdb
 
-from icecream import ic
 from rich import box
 from rich._inspect import Inspect
 from rich.console import Console
@@ -254,6 +253,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             Icecream print.
             """
             try:
+                from icecream import ic
+
                 val = self._getval(arg)
                 ic.configureOutput(prefix="🍦 |> ")
                 self._print(ic.format(arg, val))

@@ -102,7 +102,14 @@ In order to user `pdbr` with pytest `--pdb` flag, add `addopts` setting in your 
 [pytest]
 addopts: --pdbcls=pdbr:RichPdb
 ```
-### Shell
+## Django DiscoverRunner
+To being activated the pdb in Django test, change `TEST_RUNNER` like below. Unlike Django (since you are not allowed to use for smaller versions than 3), pdbr runner can be used for version 1.8 and subsequent versions.
+
+```
+TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
+```
+![](/images/image10.png)
+## Shell
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample
 ![](/images/image9.png)
