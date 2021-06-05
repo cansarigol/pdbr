@@ -109,6 +109,16 @@ To being activated the pdb in Django test, change `TEST_RUNNER` like below. Unli
 TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
 ```
 ![](/images/image10.png)
+## Django Middleware
+In order to catch the problematic codes with post mortem, place the middleware class.
+
+```
+MIDDLEWARE = (
+    ...
+    "pdbr.middleware.PdbrMiddleware",
+)
+```
+![](/images/image11.png)
 ## Shell
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample

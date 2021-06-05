@@ -10,4 +10,10 @@ DATABASES = {
     }
 }
 
+INSTALLED_APPS = ("tests.tests_django",)
+
 TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
+
+ROOT_URLCONF = "tests.tests_django.urls"
+
+MIDDLEWARE = ["pdbr.middleware.PdbrMiddleware"]

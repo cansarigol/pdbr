@@ -15,7 +15,7 @@ from rich.text import Text
 from rich.theme import Theme
 from rich.tree import Tree
 
-from pdbr.console_layout import ConsoleLayout
+from pdbr._console_layout import ConsoleLayout
 
 try:
     from IPython.terminal.interactiveshell import TerminalInteractiveShell
