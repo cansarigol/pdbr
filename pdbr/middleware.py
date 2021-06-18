@@ -15,5 +15,5 @@ class PdbrMiddleware:
     def __call__(self, request):
         return self.get_response(request)
 
-    def process_exception(self, request, exception):
+    def process_exception(self, request, exception):  # noqa: F841
         post_mortem(sys.exc_info()[2])

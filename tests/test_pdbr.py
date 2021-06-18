@@ -23,10 +23,10 @@ def test_print(capsys, RichPdb):
 def test_print_error(capsys, RichPdb):
     RichPdb().error("error")
     captured = capsys.readouterr()
-    assert captured.out == "*** error\n"
+    assert captured.out == "\x1b[1;31m*** error\x1b[0m\n"
 
 
 def test_print_with_style(capsys, RichPdb):
     RichPdb()._print("msg", style="yellow")
     captured = capsys.readouterr()
-    assert captured.out == "msg\n"
+    assert captured.out == "\x1b[33mmsg\x1b[0m\n"

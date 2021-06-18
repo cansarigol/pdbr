@@ -76,9 +76,9 @@ app = Celery('tasks', broker='pyamqp://guest@localhost//')
 
 @app.task
 def add(x, y):
-    
+
     import pdbr; pdbr.celery_set_trace()
-    
+
     return x + y
 
 ```
@@ -87,7 +87,7 @@ Instead of using `telnet` or `nc`, in terms of using pdbr style, `pdbr_telnet` c
 ![](/images/image6.png)
 
 
-## IPython 
+## IPython
 
 Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with it like below or just install your own version.
 
@@ -129,7 +129,7 @@ Running `pdbr` command in terminal starts an `IPython` terminal app instance. Un
 
 ## Vscode user snippet
 
-To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**. 
+To create or edit your own snippets, select **User Snippets** under **File > Preferences** (**Code > Preferences** on macOS), and then select **python.json**.
 
 Place the below snippet in json file for **pdbr**.
 
