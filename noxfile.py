@@ -15,13 +15,11 @@ def lint(session, reuse_venv=True):
 
 @nox.session
 def check(session, reuse_venv=True):
-    session.install("flake8", "isort==5.*", "black>=20.8b1")
-    session.run("flake8", "pdbr", "tests")
-    session.run("black", "--check", "--diff", *SOURCE_FILES)
-    session.run("isort", "--check", "--diff", *SOURCE_FILES)
+    session.install("pre-commit")
+    session.run("pre-commit", "run", "--all-files")
 
 
-@nox.session(python=["3.6", "3.7", "3.8", "3.9"])
+@nox.session(python=["3.6.13", "3.7", "3.8", "3.9"])
 def test(session, reuse_venv=True):
     session.install("pytest", "pytest-cov", "rich", "icecream", "prompt_toolkit")
     session.run("pytest", "--cov-report", "term-missing", "--cov=pdbr", "tests")

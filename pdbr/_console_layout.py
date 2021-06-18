@@ -21,30 +21,29 @@ class ConsoleLayout(metaclass=ConsoleLayoutMeta):
 
     def _prep_layout(self):
         layout = Layout()
-        body = Layout(name="body", ratio=2)
-        footer = Layout(name="footer", ratio=1)
-        layout.split(body, footer)
+        right_body = Layout(name="right_body", ratio=1)
 
-        body.split(
+        layout.split(
             Layout(name="left_body", ratio=2),
-            Layout(name="right_body", ratio=1),
+            right_body,
             splitter="row",
         )
 
-        footer.split(
-            Layout(name="left_footer"), Layout(name="right_footer"), splitter="row"
+        right_body.split(
+            Layout(name="up_footer", ratio=2), Layout(name="bottom_footer", ratio=1)
         )
         return layout
 
     def print(self, message, code, stack_trace, vars, **kwargs):
         try:
-            self.layout["left_body"].update(message)
-            self.layout["right_body"].update(code)
-            self.layout["left_footer"].update(
+            self.layout["left_body"].update(code)
+            self.layout["up_footer"].update(Panel(vars, title="Locals"))
+
+            self.layout["bottom_footer"].update(
                 Panel(Lines(stack_trace), title="Stack", style="white on blue")
             )
-            self.layout["right_footer"].update(Panel(vars, title="Locals"))
 
             self.console.print(self.layout, **kwargs)
+            self.console.print(message, **kwargs)
         except NotRenderableError:
             self.console.print(message, **kwargs)

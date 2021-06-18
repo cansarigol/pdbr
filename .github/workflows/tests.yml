@@ -10,10 +10,10 @@ jobs:
   tests:
     name: "Check lint and tests"
     runs-on: "ubuntu-latest"
-    
+
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9.0"]    
+        python-version: ["3.6.13", "3.7", "3.8", "3.9.0"]
 
     steps:
       - uses: actions/checkout@master

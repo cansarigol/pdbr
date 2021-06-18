@@ -96,6 +96,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                         {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
                     ),
                     style=self._style,
+                    force_terminal=True,
+                    force_interactive=True,
                 )
             return self._console
 
@@ -316,7 +318,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def _print_layout(self, val, **kwargs):
             ConsoleLayout(self.console).print(
                 val,
-                code=self._get_syntax_for_list(with_line_range=True),
+                code=self._get_syntax_for_list(),
                 stack_trace=self.stack_trace(**kwargs),
                 vars=self.get_varstree(),
                 **kwargs,

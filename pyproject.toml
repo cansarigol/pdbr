@@ -10,7 +10,7 @@ readme = "README.md"
 homepage = "https://github.com/cansarigol/pdbr"
 repository = "https://github.com/cansarigol/pdbr"
 classifiers = [
-    "Development Status :: 4 - Beta",    
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
@@ -22,7 +22,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.13"
 rich = "^10.0.0"
 celery = {version = "^4.4.7", optional = true}
 ipython = {version = "7.16", optional = true}
@@ -44,3 +44,10 @@ pdbr_telnet = 'pdbr.cli:telnet'
 [build-system]
 requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"
+
+[tool.vulture]
+make_whitelist = true
+min_confidence = 80
+paths = ["pdbr", "tests"]
+sort_by_size = true
+verbose = false

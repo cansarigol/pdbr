@@ -19,7 +19,7 @@ class PDBRDebugResult(unittest.TextTestResult):
     def _print(self, test, err):
         self.buffer = False
         self._pdbr.message(f"\n{test}")
-        self._pdbr.error(f"{err[0].__name__}: {err[1]}")
+        self._pdbr.error("%s: %s", err[0].__name__, err[1])
         post_mortem(err[2])
 
 
