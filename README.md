@@ -31,21 +31,23 @@ import pdbr
 ```
 
 ## New commands
-### (v)ars
-Get the local variables list as table.
-
-### varstree | vt
-Get the local variables list as tree.
-
+### (ic)ecream
+🍦 [Icecream](https://github.com/gruns/icecream) print.
 ### (i)nspect / inspectall | ia
 [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
+### search | src
+Search a phrase in the current frame.
+In order to repeat the last one, type **/** character as arg.
+### (v)ars
+Get the local variables list as table.
+### varstree | vt
+Get the local variables list as tree.
 
 ![](/images/image5.png)
 
 ### pp
 [rich.pretty.pprint](https://rich.readthedocs.io/en/latest/reference/pretty.html?highlight=pprint#rich.pretty.pprint)
-### (ic)ecream
-🍦 [Icecream](https://github.com/gruns/icecream) print.
+
 
 ## Config
 ### Style

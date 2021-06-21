@@ -2,7 +2,7 @@ import inspect
 import io
 import os
 import re
-from pdb import Pdb
+from pdb import Pdb, getsourcelines
 
 from rich import box
 from rich._inspect import Inspect
@@ -41,6 +41,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         _theme = None
         _history_file = None
         _ipython_history_file = None
+        _latest_search_arg = ""
 
         def __init__(
             self,
@@ -167,6 +168,34 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 self.error("could not get source code")
 
         do_ll = do_longlist
+
+        def do_search(self, arg):
+            """search | src
+            Search a phrase in the current frame.
+            In order to repeat the last one, type `/` character as arg.
+            """
+            if not arg or (arg == "/" and not self._latest_search_arg):
+                self.error("Search failed: arg is missing")
+                return
+
+            if arg == "/":
+                arg = self._latest_search_arg
+            else:
+                self._latest_search_arg = arg
+
+            lines, lineno = getsourcelines(self.curframe)
+            indexes = [index for index, line in enumerate(lines, lineno) if arg in line]
+
+            if len(indexes) > 0:
+                bigger_indexes = [
+                    index for index in indexes if index > self.curframe.f_lineno
+                ]
+                next_line = bigger_indexes[0] if bigger_indexes else indexes[0]
+                return super().do_jump(next_line)
+            else:
+                self.error(f"Search failed: '{arg}' not found")
+
+        do_src = do_search
 
         def get_varstable(self):
             variables = self._get_variables()
