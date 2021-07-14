@@ -4,7 +4,7 @@ import os
 import re
 from pdb import Pdb, getsourcelines
 
-from rich import box
+from rich import box, markup
 from rich._inspect import Inspect
 from rich.console import Console
 from rich.panel import Panel
@@ -333,6 +333,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             if val == "--Return--":
                 return
 
+            val = markup.escape(val)
             kwargs = {"style": str(style)} if style else {}
             args = (prefix, val) if prefix else (val,)
             if (
