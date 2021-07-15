@@ -36,3 +36,7 @@ def test_print_without_escape_tag(capsys, RichPdb):
     RichPdb()._print("msg[tag]")
     captured = capsys.readouterr()
     assert captured.out == "msg\x1b[1m[\x1b[0mtag\x1b[1m]\x1b[0m\n"
+
+    RichPdb()._print("msg[tag]", dont_escape=True)
+    captured = capsys.readouterr()
+    assert captured.out == "msg\n"

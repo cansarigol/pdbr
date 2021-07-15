@@ -114,6 +114,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                     ),
                     style="warning",
                     print_layout=False,
+                    dont_escape=True,
                 )
 
         do_help.__doc__ = base.do_help.__doc__
@@ -329,11 +330,15 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
-        def _print(self, val, prefix=None, style=None, print_layout=True):
+        def _print(
+            self, val, prefix=None, style=None, print_layout=True, dont_escape=False
+        ):
             if val == "--Return--":
                 return
 
-            val = markup.escape(val)
+            if dont_escape is False:
+                val = markup.escape(val)
+
             kwargs = {"style": str(style)} if style else {}
             args = (prefix, val) if prefix else (val,)
             if (
