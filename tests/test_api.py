@@ -10,4 +10,5 @@ def test_api_attr():
         "celery_set_trace",
         "RichPdb",
         "pdbr_context",
+        "apdbr_context",
     ]

@@ -102,9 +102,10 @@ In order to user `pdbr` with pytest `--pdb` flag, add `addopts` setting in your 
 addopts: --pdbcls=pdbr:RichPdb
 ```
 ## Context Decorator
-`pdbr_context` can be used as **with statement** or **decorator**. It calls `post_mortem` if `traceback` is not none.
-```
-from pdbr import pdbr_context
+`pdbr_context` and `apdbr_context` (`asyncio` corresponding) can be used as **with statement** or **decorator**. It calls `post_mortem` if `traceback` is not none.
+
+```python
+from pdbr import apdbr_context, pdbr_context
 
 @pdbr_context()
 def foo():
@@ -112,6 +113,15 @@ def foo():
 
 def bar():
     with pdbr_context():
+        ...
+
+
+@apdbr_context()
+async def foo():
+    ...
+
+async def bar():
+    async with apdbr_context():
         ...
 ```
 
