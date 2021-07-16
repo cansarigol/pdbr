@@ -101,6 +101,21 @@ In order to user `pdbr` with pytest `--pdb` flag, add `addopts` setting in your 
 [pytest]
 addopts: --pdbcls=pdbr:RichPdb
 ```
+## Context Decorator
+`pdbr_context` can be used as **with statement** or **decorator**. It calls `post_mortem` if `traceback` is not none.
+```
+from pdbr import pdbr_context
+
+@pdbr_context()
+def foo():
+    ...
+
+def bar():
+    with pdbr_context():
+        ...
+```
+
+![](/images/image12.png)
 ## Django DiscoverRunner
 To being activated the pdb in Django test, change `TEST_RUNNER` like below. Unlike Django (since you are not allowed to use for smaller versions than 3), pdbr runner can be used for version 1.8 and subsequent versions.
 

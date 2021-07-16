@@ -20,16 +20,21 @@ def run(statement, globals=None, locals=None):
     RichPdb().run(statement, globals, locals)
 
 
-def post_mortem(t=None):
-    t = t or sys.exc_info()[2]
-    if t is None:
+def post_mortem(traceback=None, value=None):
+    _, sys_value, sys_traceback = sys.exc_info()
+    value = value or sys_value
+    traceback = traceback or sys_traceback
+
+    if traceback is None:
         raise ValueError(
             "A valid traceback must be passed if no exception is being handled"
         )
 
     p = RichPdb()
     p.reset()
-    p.interaction(None, t)
+    if value:
+        p.error(value)
+    p.interaction(None, traceback)
 
 
 def pm():

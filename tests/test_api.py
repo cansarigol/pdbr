@@ -9,4 +9,5 @@ def test_api_attr():
         "post_mortem",
         "celery_set_trace",
         "RichPdb",
+        "pdbr_context",
     ]
