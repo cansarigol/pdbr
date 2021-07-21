@@ -1,6 +1,6 @@
 import atexit
 import configparser
-import os
+from pathlib import Path
 
 from pdbr._pdbr import rich_pdb_klass
 
@@ -52,7 +52,7 @@ def read_config():
         if "store_history" in config["pdbr"]:
             store_history = config["pdbr"]["store_history"]
 
-    history_file = os.path.join(os.path.expanduser("~"), store_history)
+    history_file = str(Path.home() / store_history)
     set_history_file(history_file)
     ipython_history_file = f"{history_file}_ipython"
 

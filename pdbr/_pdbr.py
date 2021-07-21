@@ -1,7 +1,7 @@
 import inspect
 import io
-import os
 import re
+from pathlib import Path
 from pdb import Pdb, getsourcelines
 
 from rich import box, markup
@@ -304,7 +304,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
 
         def _format_stack_entry(self, frame_lineno):
             stack_entry = Pdb.format_stack_entry(self, frame_lineno, "\n")
-            return stack_entry.replace(os.path.abspath(os.getcwd()), "")
+            return stack_entry.replace(str(Path.cwd().absolute()), "")
 
         def stack_trace(self):
             stacks = []
