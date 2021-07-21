@@ -16,4 +16,4 @@ TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
 
 ROOT_URLCONF = "tests.tests_django.urls"
 
-MIDDLEWARE = ["pdbr.middleware.PdbrMiddleware"]
+MIDDLEWARE = ["pdbr.middlewares.django.PdbrMiddleware"]

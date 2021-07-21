@@ -133,13 +133,29 @@ To being activated the pdb in Django test, change `TEST_RUNNER` like below. Unli
 TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
 ```
 ![](/images/image10.png)
-## Django Middleware
+## Middlewares
+### Starlette
+```python
+from fastapi import FastAPI
+from pdbr.middlewares.starlette import PdbrMiddleware
+
+app = FastAPI()
+
+app.add_middleware(PdbrMiddleware, debug=True)
+
+
+@app.get("/")
+async def main():
+    1 / 0
+    return {"message": "Hello World"}
+```
+### Django
 In order to catch the problematic codes with post mortem, place the middleware class.
 
 ```
 MIDDLEWARE = (
     ...
-    "pdbr.middleware.PdbrMiddleware",
+    "pdbr.middlewares.django.PdbrMiddleware",
 )
 ```
 ![](/images/image11.png)
