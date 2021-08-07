@@ -95,7 +95,7 @@ pip install pdbr[ipython]
 ```
 
 ## pytest
-In order to user `pdbr` with pytest `--pdb` flag, add `addopts` setting in your pytest.ini.
+In order to use `pdbr` with pytest `--pdb` flag, add `addopts` setting in your pytest.ini.
 
 ```
 [pytest]
