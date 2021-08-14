@@ -7,9 +7,12 @@ from pdbr._pdbr import rich_pdb_klass
 try:
     import readline
 except ImportError:
-    from pyreadline import Readline
+    try:
+        from pyreadline import Readline
 
-    readline = Readline()
+        readline = Readline()
+    except ModuleNotFoundError:
+        readline = None
 
 
 def set_history_file(history_file):
@@ -17,7 +20,8 @@ def set_history_file(history_file):
     This is just for Pdb,
     For Ipython, look at RichPdb.pt_init
     """
-
+    if readline is None:
+        return
     try:
         readline.read_history_file(history_file)
         readline.set_history_length(1000)
