@@ -44,7 +44,7 @@ def pm():
 def celery_set_trace(frame=None):
     pdb_cls = _rdbr_cls()
     if frame is None:
-        frame = getattr(sys, "_getframe")().f_back
+        frame = sys._getframe().f_back
     return pdb_cls.set_trace(frame)
 
 
