@@ -19,7 +19,7 @@ def check(session, reuse_venv=True):
     session.run("pre-commit", "run", "--all-files")
 
 
-@nox.session(python=["3.6.13", "3.7", "3.8", "3.9"])
+@nox.session(python=["3.6.13", "3.7", "3.8", "3.9", "3.10"])
 def test(session, reuse_venv=True):
     session.install("pytest", "pytest-cov", "rich", "icecream", "prompt_toolkit")
     session.run("pytest", "--cov-report", "term-missing", "--cov=pdbr", "tests")
