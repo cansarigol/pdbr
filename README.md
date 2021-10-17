@@ -85,6 +85,11 @@ def add(x, y):
 Instead of using `telnet` or `nc`, in terms of using pdbr style, `pdbr_telnet` command can be used.
 ![](/images/image6.png)
 
+Also in order to activate history and be able to use arrow keys, install and use [rlwrap](https://github.com/hanslub42/rlwrap) package.
+
+```
+rlwrap -H '~/.pdbr_history' pdbr_telnet localhost 6899
+```
 
 ## IPython
 
