@@ -39,6 +39,10 @@ import pdbr
 ### search | src
 Search a phrase in the current frame.
 In order to repeat the last one, type **/** character as arg.
+### sql
+Display value in sql format.
+### (syn)tax
+[ val,lexer ] Display [lexer](https://pygments.org/docs/lexers/).
 ### (v)ars
 Get the local variables list as table.
 ### varstree | vt

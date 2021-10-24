@@ -146,8 +146,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             except AttributeError:
                 return []
 
-        def do_list(self, arg):
-            """l(ist)
+        def do_l(self, arg):
+            """l
             List 11 lines source code for the current file.
             """
             try:
@@ -156,8 +156,6 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 )
             except BaseException:
                 self.error("could not get source code")
-
-        do_l = do_list
 
         def do_longlist(self, arg):
             """longlist | ll
@@ -294,6 +292,31 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 pass
 
         do_ic = do_icecream
+
+        def do_syntax(self, arg):
+            """syn(tax)[ val,lexer ]
+            Display lexer. https://pygments.org/docs/lexers/
+            """
+            try:
+                val, lexer = arg.split(",")
+                val = val.strip()
+                lexer = lexer.strip()
+                val = Syntax(
+                    self._getval(val),
+                    self._getval(lexer),
+                    theme=self._theme or DEFAULT_THEME,
+                )
+                self._print(val)
+            except BaseException:
+                pass
+
+        do_syn = do_syntax
+
+        def do_sql(self, arg):
+            """sql
+            Display value in sql format.
+            """
+            self.do_syntax(f"{arg},'sql'")
 
         def displayhook(self, obj):
             if obj is not None:
