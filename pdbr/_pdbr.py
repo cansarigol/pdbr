@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 from pdb import Pdb, getsourcelines
 
+import sqlparse
 from rich import box, markup
 from rich._inspect import Inspect
 from rich.console import Console
@@ -316,7 +317,10 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             """sql
             Display value in sql format.
             """
-            self.do_syntax(f"{arg},'sql'")
+            val = sqlparse.format(
+                self._getval(arg), reindent=True, keyword_case="upper"
+            )
+            self._print(val)
 
         def displayhook(self, obj):
             if obj is not None:

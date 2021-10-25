@@ -41,6 +41,12 @@ Search a phrase in the current frame.
 In order to repeat the last one, type **/** character as arg.
 ### sql
 Display value in sql format.
+![](/images/image13.png)
+
+It can be used for Django model queries as follows.
+```
+>>> sql str(Users.objects.all().query)
+```
 ### (syn)tax
 [ val,lexer ] Display [lexer](https://pygments.org/docs/lexers/).
 ### (v)ars

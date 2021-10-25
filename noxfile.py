@@ -21,12 +21,14 @@ def check(session, reuse_venv=True):
 
 @nox.session(python=["3.6.13", "3.7", "3.8", "3.9", "3.10"])
 def test(session, reuse_venv=True):
-    session.install("pytest", "pytest-cov", "rich", "icecream", "prompt_toolkit")
+    session.install(
+        "pytest", "pytest-cov", "rich", "icecream", "prompt_toolkit", "sqlparse"
+    )
     session.run("pytest", "--cov-report", "term-missing", "--cov=pdbr", "tests")
 
 
 @nox.session
 @nox.parametrize("django", ["1.8", "1.11", "2.0", "2.2", "3.0"])
 def django_test(session, django, reuse_venv=True):
-    session.install(f"django=={django}", "rich", "pytest")
+    session.install(f"django=={django}", "rich", "pytest", "sqlparse")
     session.run("python", "runtests.py")
