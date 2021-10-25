@@ -47,6 +47,7 @@ It can be used for Django model queries as follows.
 ```
 >>> sql str(Users.objects.all().query)
 ```
+![](/images/image14.png)
 ### (syn)tax
 [ val,lexer ] Display [lexer](https://pygments.org/docs/lexers/).
 ### (v)ars
