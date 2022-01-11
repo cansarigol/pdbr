@@ -15,7 +15,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -23,9 +22,9 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.13"
+python = "^3.7.12"
 rich = "^10.0.0"
-celery = {version = "^4.4.7", optional = true}
+celery = {version = "^5.2.2", optional = true}
 ipython = {version = "7.16", optional = true}
 jedi = "0.17.2"
 icecream = "^2.1.0"
