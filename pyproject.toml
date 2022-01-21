@@ -25,7 +25,7 @@ classifiers = [
 python = "^3.7.12"
 rich = "^10.0.0"
 celery = {version = "^5.2.2", optional = true}
-ipython = {version = "7.16", optional = true}
+ipython = {version = "7.16.3", optional = true}
 jedi = "0.17.2"
 icecream = "^2.1.0"
 pyreadline = {version="^2.1", markers="sys_platform == 'win32'"}
