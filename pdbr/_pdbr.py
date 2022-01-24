@@ -324,7 +324,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
 
         def displayhook(self, obj):
             if obj is not None:
-                self._print(obj)
+                self._print(repr(obj))
 
         def error(self, msg):
             self._print(msg, prefix="***", style="danger", print_layout=False)
