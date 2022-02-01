@@ -179,6 +179,23 @@ MIDDLEWARE = (
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
 #### %debug magic sample
 ![](/images/image9.png)
+### As a Script
+If `pdbr` command is used with an argument, it is invoked as a script and [debugger-commands](https://docs.python.org/3/library/pdb.html#debugger-commands) can be used with it.
+```python
+# equivalent code: `python -m pdbr -c 'b 5' my_test.py`
+pdbr -c 'b 5' my_test.py
+
+>>> Breakpoint 1 at /my_test.py:5
+> /my_test.py(3)<module>()
+      1
+      2
+----> 3 def test():
+      4         foo = "foo"
+1     5         bar = "bar"
+
+(Pdbr)
+
+```
 ### Terminal
 #### Django shell sample
 ![](/images/image7.png)

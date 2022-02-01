@@ -48,6 +48,10 @@ def celery_set_trace(frame=None):
     return pdb_cls.set_trace(frame)
 
 
-if __name__ == "__main__":
+def main():
     pdb.Pdb = RichPdb
     pdb.main()
+
+
+if __name__ == "__main__":
+    main()

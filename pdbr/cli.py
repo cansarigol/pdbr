@@ -3,49 +3,25 @@ from telnetlib import Telnet
 
 from rich.file_proxy import FileProxy
 
-from pdbr.__main__ import RichPdb
+from pdbr.helpers import run_ipython_shell
 
 
 def shell():
-    try:
-        from IPython.terminal.interactiveshell import TerminalInteractiveShell
-        from IPython.terminal.ipapp import TerminalIPythonApp
-        from prompt_toolkit.history import FileHistory
-        from traitlets import Type
+    import getopt
 
-        TerminalInteractiveShell.simple_prompt = False
-    except ModuleNotFoundError as error:
-        raise type(error)(
-            "In order to use pdbr shell, install IPython with pdbr[ipython]"
-        ) from error
+    _, args = getopt.getopt(sys.argv[1:], "mhc:", ["command="])
 
-    class PdbrTerminalInteractiveShell(TerminalInteractiveShell):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+    if not args:
+        run_ipython_shell()
+    else:
+        from pdbr.__main__ import main
 
-            if RichPdb._ipython_history_file:
-                self.debugger_history = FileHistory(RichPdb._ipython_history_file)
-
-        @property
-        def debugger_cls(self):
-            return RichPdb
-
-    class PdbrTerminalIPythonApp(TerminalIPythonApp):
-        interactive_shell_class = Type(
-            klass=object,  # use default_value otherwise which only allow subclasses.
-            default_value=PdbrTerminalInteractiveShell,
-            help=(
-                "Class to use to instantiate the TerminalInteractiveShell object. "
-                "Useful for custom Frontends"
-            ),
-        ).tag(config=True)
-
-    app = PdbrTerminalIPythonApp.instance()
-    app.initialize()
-    sys.exit(app.start())
+        main()
 
 
 def telnet():
+    from pdbr.__main__ import RichPdb
+
     pdb_cls = RichPdb()
     if len(sys.argv) < 3:
         pdb_cls.error("Usage : pdbr_telnet hostname port")
