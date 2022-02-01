@@ -77,7 +77,11 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             from prompt_toolkit.history import FileHistory
 
             if self._ipython_history_file:
-                self.shell.debugger_history = FileHistory(self._ipython_history_file)
+                history_file = FileHistory(self._ipython_history_file)
+                self.shell.debugger_history = history_file
+                # In order to fix the error for ipython 8.x
+                self.debugger_history = history_file
+
             func = super().pt_init
             func_args = inspect.getargspec(super().pt_init).args
             if "pt_session_options" in func_args:
