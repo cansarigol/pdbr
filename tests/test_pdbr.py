@@ -56,7 +56,7 @@ def test_precmd(capsys, RichPdb):
     captured_output = capsys.readouterr().out
     assert line == ""
     rpdb.error(
-        'Cell magics (multiline) are not yet supported. Use a single "%" instead.'
+        "Cell magics (multiline) are not yet supported. Use a single '%' instead."
     )
     cell_magics_error = capsys.readouterr().out
     assert cell_magics_error == captured_output
