@@ -41,6 +41,7 @@ def test_print_without_escape_tag(capsys, RichPdb):
     captured = capsys.readouterr()
     assert captured.out == "msg\n"
 
+
 def test_precmd(capsys, RichPdb):
     rpdb = RichPdb()
     cmd = 'print("msg")'
@@ -48,12 +49,14 @@ def test_precmd(capsys, RichPdb):
     captured = capsys.readouterr()
     assert line == cmd
     assert captured.out == ""
-    
+
     # Cell magics aren't supported, assert that it's not executed
-    cmd = '%%ls'
+    cmd = "%%ls"
     line = rpdb.precmd(cmd)
     captured_output = capsys.readouterr().out
     assert line == ""
-    rpdb.error('Cell magics (multiline) are not yet supported. Use a single "%" instead.')
+    rpdb.error(
+        'Cell magics (multiline) are not yet supported. Use a single "%" instead.'
+    )
     cell_magics_error = capsys.readouterr().out
     assert cell_magics_error == captured_output
