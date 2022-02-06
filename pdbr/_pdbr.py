@@ -407,4 +407,26 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
             # vds: <<
 
+        def run_magic(self, line) -> str:
+            """
+            Parses the line and runs the appropriate magic function.
+            Assumes that the line is without a leading '%'.
+            """
+            magic_name, arg, line = self.parseline(line)
+            if hasattr(self, f'do_{magic_name}'):
+                # We want to use do_{magic_name} methods if defined.
+                # This is indeed the case with do_pdef, do_pdoc etc,
+                # which are defined by our base class (IPython.core.debugger.Pdb).
+                result = getattr(self, f'do_{magic_name}')(line)
+                return result or ""
+            magic_fn = self.shell.find_line_magic(magic_name)
+            if not magic_fn:
+                self.error(f"Line Magic %{magic_name} not found")
+                return ""
+            if magic_name in ('time', 'timeit'):
+                result = magic_fn(arg, local_ns={**self.curframe_locals, **self.curframe.f_globals})
+            else:
+                result = magic_fn(arg)
+            return result or ""
+
     return RichPdb
