@@ -361,15 +361,6 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
-        def onecmd(self, line: str) -> bool:
-            if not isinstance(line, str):
-                self._print(line, style="rgb(255,255,255)")
-                return False
-            try:
-                return super().onecmd(line)
-            except Exception as e:
-                self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
-                return True
 
         def precmd(self, line) -> str:
             """
