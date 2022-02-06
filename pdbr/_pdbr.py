@@ -361,7 +361,6 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
-
         def precmd(self, line) -> str:
             """
             Invokes 'run_magic()' if the line starts with a '%'.
