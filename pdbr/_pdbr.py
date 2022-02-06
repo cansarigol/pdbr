@@ -382,7 +382,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 if line.startswith("%"):
                     if line.startswith("%%"):
                         self.error(
-                            f'Cell magics (multiline) are not yet supported. Use a single "%" instead.'
+                            "Cell magics (multiline) are not yet supported. "
+                            "Use a single '%' instead."
                         )
                         return ""
                     return self.run_magic(line[1:])
