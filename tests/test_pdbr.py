@@ -50,13 +50,3 @@ def test_precmd(capsys, RichPdb):
     assert line == cmd
     assert captured.out == ""
 
-    # Cell magics aren't supported, assert that it's not executed
-    cmd = "%%ls"
-    line = rpdb.precmd(cmd)
-    captured_output = capsys.readouterr().out
-    assert line == ""
-    rpdb.error(
-        "Cell magics (multiline) are not yet supported. Use a single '%' instead."
-    )
-    cell_magics_error = capsys.readouterr().out
-    assert cell_magics_error == captured_output
