@@ -49,4 +49,3 @@ def test_precmd(capsys, RichPdb):
     captured = capsys.readouterr()
     assert line == cmd
     assert captured.out == ""
-
