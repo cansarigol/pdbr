@@ -26,7 +26,18 @@ def untag(s):
     s = s.replace("\x1b[?2004l", "")
     return TAG_RE.sub("", s)
 
-
+def unquote(s):
+    """
+    >>> unquote('"foo"')
+    'foo'
+    >>> unquote('"foo"bar')
+    '"foo"bar'
+    """
+    for quote in ('"', "'"):
+        if s.startswith(quote) and s.endswith(quote):
+            return s[1:-1]
+    return s
+    
 TMP_FILE_CONTENT = '''def foo(arg):
     """Foo docstring"""
     pass
@@ -262,3 +273,24 @@ def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     rpdb.onecmd(rpdb.precmd("%pinfo2 foo"))
     magic_pinfo2_foo_output = capsys.readouterr().out
     assert magic_pinfo2_foo_output == magic_foo_qmark2_output
+
+def test_filesystem_magics(capsys, RichIPdb):
+    cwd = Path.cwd().absolute().as_posix()
+    rpdb = RichIPdb(stdout=sys.stdout)
+    rpdb.onecmd("%pwd")
+    pwd_output = capsys.readouterr().out.strip()
+    assert pwd_output == cwd
+    rpdb.onecmd("import os; os.getcwd()")
+    pwd_output = unquote(capsys.readouterr().out.strip())
+    assert pwd_output == cwd
+    
+    new_dir = str(Path.cwd().absolute().parent)
+    rpdb.onecmd(f"%cd {new_dir}")
+    cd_output = untag(capsys.readouterr().out.strip())
+    assert cd_output.endswith(new_dir)
+    rpdb.onecmd("%pwd")
+    pwd_output = capsys.readouterr().out.strip()
+    assert pwd_output == new_dir
+    rpdb.onecmd("import os; os.getcwd()")
+    pwd_output = unquote(capsys.readouterr().out.strip())
+    assert pwd_output == new_dir
