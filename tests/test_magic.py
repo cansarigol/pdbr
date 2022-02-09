@@ -2,6 +2,7 @@ import inspect
 import os
 import re
 import sys
+from pathlib import Path
 
 import pexpect
 import pytest
@@ -13,14 +14,41 @@ from pdbr._pdbr import rich_pdb_klass
 
 NUMBER_RE = "[\d.e+_,-]+"  # Matches 1e+03, 1.0e-03, 1_000, 1,000
 
+TAG_RE = re.compile(r"\x1b\[[\dDClhJ;?]+m?")
+
+
+def untag(s):
+    s = s.replace("\x1b[?2004l", "")
+    return TAG_RE.sub("", s)
+
 
 @pytest.fixture
 def pdbr_child_process(tmp_path) -> spawn:
+    """
+    Spawn a pdbr prompt in a child process.
+    """
     file = tmp_path / "foo.py"
     file.write_text("breakpoint()")
     env = os.environ.copy()
     env["IPY_TEST_SIMPLE_PROMPT"] = "1"
-    child = pexpect.spawn(sys.executable, ["-m", "pdbr", str(file)], env=env)
+    child = pexpect.spawn(
+        str(Path(sys.executable).parent / "pdbr"),
+        [str(file)],
+        env=env,
+        encoding="utf-8",
+    )
+    child.expect("foo.py")
+    child.expect("breakpoint")
+    child.sendeof()
+    # child = replwrap.REPLWrapper(f"{sys.executable} -m pdbr {str(file)}",
+    #                              ".*",
+    #                              ".*",
+    #                              '',
+    #                              )
+    # child.run_command("\n")
+    # child.run_command("\n")
+    # fout = open('mylog.txt', 'w')
+    # child.logfile_read = fout
     child.timeout = 3
     return child
 
@@ -45,7 +73,7 @@ def RichIPdb():
         ripdb.setup(currentframe.f_back, None)
         # Set the console's file to stdout so that we can capture the output
         _console = Console(
-            file=sys.stdout,
+            file=kwargs.get("stdout", sys.stdout),
             theme=Theme(
                 {"info": "dim cyan", "warning": "magenta", "danger": "bold red"}
             ),
@@ -69,8 +97,9 @@ class TestPdbrChildProcess:
         pdbr_child_process.expect_exact("std. dev. of 1 run, 1 loop each)")
 
 
-def test_precmd_time_line_magic(capsys, RichIPdb):
-    RichIPdb().precmd("%time pass")
+
+def test_onecmd_time_line_magic(capsys, RichIPdb):
+    RichIPdb().onecmd("%time pass")
     captured = capsys.readouterr()
     output = captured.out
     assert re.search(
@@ -80,20 +109,61 @@ def test_precmd_time_line_magic(capsys, RichIPdb):
     )
 
 
-def test_precmd_unsupported_cell_magic(capsys, RichIPdb):
-    RichIPdb().precmd("%%time pass")
+def test_onecmd_unsupported_cell_magic(capsys, RichIPdb):
+    RichIPdb().onecmd("%%time pass")
     captured = capsys.readouterr()
     output = captured.out
-    assert (
-        output
-        == f"*** Cell magics (multiline) are not yet supported. Use a single '%' instead.\n"
-    )
-    cmd = "%%ls"
-    line = RichIPdb().precmd(cmd)
+    error = f"Cell magics (multiline) are not yet supported. Use a single '%' instead."
+    assert output == "*** " + error + "\n"
+    cmd = "%%time"
+    stop = RichIPdb().onecmd(cmd)
     captured_output = capsys.readouterr().out
-    assert line == ""
-    RichIPdb().error(
-        "Cell magics (multiline) are not yet supported. Use a single '%' instead."
-    )
+    assert not stop
+    RichIPdb().error(error)
     cell_magics_error = capsys.readouterr().out
     assert cell_magics_error == captured_output
+
+
+def test_onecmd_lsmagic_line_magic(capsys, RichIPdb):
+    RichIPdb().onecmd("%lsmagic")
+    captured = capsys.readouterr()
+    output = captured.out
+
+    assert re.search(
+        "Available line magics:\n%alias +%alias_magic +%autoawait.*%%writefile",
+        output,
+        re.DOTALL,
+    )
+
+
+def test_no_zombie_lastcmd(capsys, RichIPdb):
+    rpdb = RichIPdb(stdout=sys.stdout)
+    rpdb.onecmd("print('SHOULD_NOT_BE_IN_%pwd_OUTPUT')")
+    captured = capsys.readouterr()
+    assert captured.out.endswith(
+        "SHOULD_NOT_BE_IN_%pwd_OUTPUT\n"
+    )  # Starts with colors and prompt
+    rpdb.onecmd("%pwd")
+    captured = capsys.readouterr()
+    assert captured.out.endswith(Path.cwd().absolute().as_posix() + "\n")
+    assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
+
+@pytest.mark.skip("Doesn't work yet")
+def test_TerminalPdb_magics_override(capsys, RichIPdb):
+    rpdb = RichIPdb(stdout=sys.stdout)
+    function_block = '''def foo(arg):
+    """Bar docstring"""
+    pass
+    '''
+    
+    rpdb.onecmd(function_block)
+    rpdb.onecmd("%pdef foo")
+    captured = capsys.readouterr()
+    out = captured.out
+    assert out.endswith("foo(arg)")
+    rpdb.onecmd("%pdoc foo")
+    rpdb.onecmd("%pfile foo")
+    rpdb.onecmd("%pinfo foo")
+    rpdb.onecmd("%pinfo2 foo")
+    rpdb.onecmd("%psource foo")
+    
