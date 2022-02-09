@@ -14,11 +14,15 @@ from pdbr._pdbr import rich_pdb_klass
 
 NUMBER_RE = "[\d.e+_,-]+"  # Matches 1e+03, 1.0e-03, 1_000, 1,000
 
-TAG_RE = re.compile(r"\x1b\[[\dDClhJ;?]+m?")
+TAG_RE = re.compile(r"\x1b[\[\]]+[\dDClhJt;?]+m?")
 
 
 def untag(s):
-    s = s.replace("\x1b[?2004l", "")
+    """Not perfect, but does the job.
+    >>> untag('\x1b[0mfoo\x1b[0m\x1b[0;34m(\x1b[0m\x1b[0marg\x1b[0m\x1b[0;34m)\x1b[0m\x1b[0;34m\x1b[0m\x1b[0;34m\x1b[0m\x1b[0m')
+    'foo(arg)'
+    """
+    s = s.replace("\x07", "")
     return TAG_RE.sub("", s)
 
 
@@ -148,22 +152,77 @@ def test_no_zombie_lastcmd(capsys, RichIPdb):
     assert captured.out.endswith(Path.cwd().absolute().as_posix() + "\n")
     assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
 
-@pytest.mark.skip("Doesn't work yet")
-def test_TerminalPdb_magics_override(capsys, RichIPdb):
-    rpdb = RichIPdb(stdout=sys.stdout)
-    function_block = '''def foo(arg):
+def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
+    from IPython.utils.text import dedent
+
+    tmp_file = tmp_path / "foo.py"
+    tmp_file_content = '''def foo(arg):
     """Bar docstring"""
     pass
     '''
-    
-    rpdb.onecmd(function_block)
+    tmp_file.write_text(tmp_file_content)
+
+    rpdb = RichIPdb(stdout=sys.stdout)
+    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
+    rpdb.onecmd(f"from {tmp_file.stem} import foo")
+
+    # pdef
+    rpdb.do_pdef("foo")
+    do_pdef_foo_output = capsys.readouterr().out
+    untagged = untag(do_pdef_foo_output).strip()
+    assert untagged.endswith("foo(arg)"), untagged
     rpdb.onecmd("%pdef foo")
-    captured = capsys.readouterr()
-    out = captured.out
-    assert out.endswith("foo(arg)")
+    magic_pdef_foo_output = capsys.readouterr().out
+    untagged = untag(magic_pdef_foo_output).strip()
+    assert untagged.endswith("foo(arg)"), untagged
+
+    # pdoc
     rpdb.onecmd("%pdoc foo")
+    magic_pdef_foo_output = capsys.readouterr().out
+    untagged = untag(magic_pdef_foo_output).strip()
+    expected_docstring = dedent(
+        """Class docstring:
+        Bar docstring
+    Call docstring:
+        Call self as a function."""
+    )
+    assert untagged == expected_docstring, untagged
+
+    # pfile
     rpdb.onecmd("%pfile foo")
+    magic_pfile_foo_output = capsys.readouterr().out
+    untagged = untag(magic_pfile_foo_output).strip()
+    tmp_file_content = Path(tmp_file).read_text().strip()
+    assert untagged == tmp_file_content
+
+    # pinfo
     rpdb.onecmd("%pinfo foo")
+    magic_pinfo_foo_output = capsys.readouterr().out
+    untagged = untag(magic_pinfo_foo_output).strip()
+    expected_pinfo = dedent(
+        f"""Signature: foo(arg)
+    Docstring: Bar docstring
+    File:      {tmp_file.absolute()}
+    Type:      function"""
+    )
+    assert untagged == expected_pinfo, untagged
+
+    # pinfo2
     rpdb.onecmd("%pinfo2 foo")
-    rpdb.onecmd("%psource foo")
+    magic_pinfo2_foo_output = capsys.readouterr().out
+    untagged = untag(magic_pinfo2_foo_output).strip()
+    expected_pinfo2 = (
+        dedent(
+            f"""Signature: foo(arg)
+    Source:   
+    %s
+    File:      {tmp_file.absolute()}
+    Type:      function"""
+        )
+        % tmp_file_content
+    )
+    assert untagged == expected_pinfo2, untagged
     
+    # rpdb.onecmd("%psource foo")
+    # rpdb.onecmd("foo?")
+    # rpdb.onecmd("foo??")
