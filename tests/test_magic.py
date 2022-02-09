@@ -236,18 +236,18 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
 
 def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     from IPython.utils.text import dedent
-    
+
     tmp_file = tmp_path / "foo.py"
     tmp_file_content = '''def foo(arg):
     """Bar docstring"""
     pass
     '''
     tmp_file.write_text(tmp_file_content)
-    
+
     rpdb = RichIPdb(stdout=sys.stdout)
     rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
     rpdb.onecmd(f"from {tmp_file.stem} import foo")
-    
+
     # pinfo
     rpdb.onecmd(rpdb.precmd("foo?"))
     magic_foo_qmark_output = capsys.readouterr().out
