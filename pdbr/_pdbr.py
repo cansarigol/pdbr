@@ -361,12 +361,12 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
-        def precmd(self, line) -> str:
+        def onecmd(self, line: str) -> bool:
             """
             Invokes 'run_magic()' if the line starts with a '%'.
-            The return value is passed on to 'onecmd()' method by 'cmdloop()'.
+            The loop stops of this function returns True.
+            (unless an overridden 'postcmd()' behaves differently)
             """
-            orig_line = line
             try:
                 line = line.strip()
                 if line.startswith("%"):
@@ -375,13 +375,14 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                             "Cell magics (multiline) are not yet supported. "
                             "Use a single '%' instead."
                         )
-                        return ""
-                    return self.run_magic(line[1:])
-                return super().precmd(line)
+                        return False
+                    self.run_magic(line[1:])
+                    return False
+                return super().onecmd(line)
 
             except Exception as e:
-                self.error(f"{type(e).__qualname__} in precmd({line!r}): {e}")
-                return orig_line
+                self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
+                return False
 
         def _print(
             self, val, prefix=None, style=None, print_layout=True, dont_escape=False
