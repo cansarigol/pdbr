@@ -152,6 +152,7 @@ def test_no_zombie_lastcmd(capsys, RichIPdb):
     assert captured.out.endswith(Path.cwd().absolute().as_posix() + "\n")
     assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
 
+
 def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     from IPython.utils.text import dedent
 
@@ -222,7 +223,7 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
         % tmp_file_content
     )
     assert untagged == expected_pinfo2, untagged
-    
+
     # rpdb.onecmd("%psource foo")
     # rpdb.onecmd("foo?")
     # rpdb.onecmd("foo??")
