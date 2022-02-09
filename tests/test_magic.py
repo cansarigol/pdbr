@@ -27,6 +27,22 @@ def untag(s):
     return TAG_RE.sub("", s)
 
 
+TMP_FILE_CONTENT = '''def foo(arg):
+    """Foo docstring"""
+    pass
+    '''
+
+
+def import_tmp_file(rpdb, tmp_path: Path, file_content=TMP_FILE_CONTENT) -> Path:
+    """Creates a temporary file, writes `file_content` to it and makes pdbr import it."""
+    tmp_file = tmp_path / "foo.py"
+    tmp_file.write_text(file_content)
+
+    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
+    rpdb.onecmd(f"from {tmp_file.stem} import foo")
+    return tmp_file
+
+
 @pytest.fixture
 def pdbr_child_process(tmp_path) -> spawn:
     """
@@ -45,15 +61,6 @@ def pdbr_child_process(tmp_path) -> spawn:
     child.expect("foo.py")
     child.expect("breakpoint")
     child.sendeof()
-    # child = replwrap.REPLWrapper(f"{sys.executable} -m pdbr {str(file)}",
-    #                              ".*",
-    #                              ".*",
-    #                              '',
-    #                              )
-    # child.run_command("\n")
-    # child.run_command("\n")
-    # fout = open('mylog.txt', 'w')
-    # child.logfile_read = fout
     child.timeout = 3
     return child
 
@@ -153,19 +160,15 @@ def test_no_zombie_lastcmd(capsys, RichIPdb):
     assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
 
 
-def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
+def test_IPython_Pdb_magics_implementation(tmp_path, capsys, RichIPdb):
+    """
+    We test do_{magic} methods that are concretely implemented by IPython.core.debugger.Pdb,
+    and don't default to IPython's 'InteractiveShell.run_line_magic()' like the other magics.
+    """
     from IPython.utils.text import dedent
 
-    tmp_file = tmp_path / "foo.py"
-    tmp_file_content = '''def foo(arg):
-    """Bar docstring"""
-    pass
-    '''
-    tmp_file.write_text(tmp_file_content)
-
     rpdb = RichIPdb(stdout=sys.stdout)
-    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
-    rpdb.onecmd(f"from {tmp_file.stem} import foo")
+    tmp_file = import_tmp_file(rpdb, tmp_path)
 
     # pdef
     rpdb.do_pdef("foo")
@@ -183,7 +186,7 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     untagged = untag(magic_pdef_foo_output).strip()
     expected_docstring = dedent(
         """Class docstring:
-        Bar docstring
+        Foo docstring
     Call docstring:
         Call self as a function."""
     )
@@ -202,7 +205,7 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     untagged = untag(magic_pinfo_foo_output).strip()
     expected_pinfo = dedent(
         f"""Signature: foo(arg)
-    Docstring: Bar docstring
+    Docstring: Foo docstring
     File:      {tmp_file.absolute()}
     Type:      function"""
     )
@@ -229,7 +232,7 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     magic_psource_foo_output = capsys.readouterr().out
     untagged = untag(magic_psource_foo_output).strip()
     expected_psource = '''def foo(arg):
-    """Bar docstring"""
+    """Foo docstring"""
     pass'''
     assert untagged == expected_psource, untagged
 
@@ -237,17 +240,8 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
 def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     from IPython.utils.text import dedent
 
-    tmp_file = tmp_path / "foo.py"
-    tmp_file_content = '''def foo(arg):
-    """Bar docstring"""
-    pass
-    '''
-    tmp_file.write_text(tmp_file_content)
-
     rpdb = RichIPdb(stdout=sys.stdout)
-    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
-    rpdb.onecmd(f"from {tmp_file.stem} import foo")
-
+    tmp_file = import_tmp_file(rpdb, tmp_path)
     # pinfo
     rpdb.onecmd(rpdb.precmd("foo?"))
     magic_foo_qmark_output = capsys.readouterr().out
@@ -255,8 +249,8 @@ def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     expected_pinfo = re.compile(
         dedent(
             f"""Signature: foo\(arg\)
-    Docstring: Bar docstring
-    File:      /tmp/.*/foo.py
+    Docstring: Foo docstring
+    File:      /tmp/.*/{tmp_file.name}
     Type:      function"""
         )
     )
