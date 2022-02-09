@@ -252,12 +252,14 @@ def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     rpdb.onecmd(rpdb.precmd("foo?"))
     magic_foo_qmark_output = capsys.readouterr().out
     untagged = untag(magic_foo_qmark_output).strip()
-    expected_pinfo = re.compile(dedent(
-        f"""Signature: foo\(arg\)
+    expected_pinfo = re.compile(
+        dedent(
+            f"""Signature: foo\(arg\)
     Docstring: Bar docstring
     File:      /tmp/.*/foo.py
     Type:      function"""
-            ))
+        )
+    )
     assert expected_pinfo.fullmatch(untagged), untagged
 
     # pinfo2
