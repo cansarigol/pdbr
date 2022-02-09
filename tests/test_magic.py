@@ -224,6 +224,45 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     )
     assert expected_pinfo2.fullmatch(untagged), untagged
 
-    # rpdb.onecmd("%psource foo")
-    # rpdb.onecmd("foo?")
-    # rpdb.onecmd("foo??")
+    # psource
+    rpdb.onecmd("%psource foo")
+    magic_psource_foo_output = capsys.readouterr().out
+    untagged = untag(magic_psource_foo_output).strip()
+    expected_psource = '''def foo(arg):
+    """Bar docstring"""
+    pass'''
+    assert untagged == expected_psource, untagged
+
+
+def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
+    from IPython.utils.text import dedent
+    
+    tmp_file = tmp_path / "foo.py"
+    tmp_file_content = '''def foo(arg):
+    """Bar docstring"""
+    pass
+    '''
+    tmp_file.write_text(tmp_file_content)
+    
+    rpdb = RichIPdb(stdout=sys.stdout)
+    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
+    rpdb.onecmd(f"from {tmp_file.stem} import foo")
+    
+    # pinfo
+    rpdb.onecmd(rpdb.precmd("foo?"))
+    magic_foo_qmark_output = capsys.readouterr().out
+    untagged = untag(magic_foo_qmark_output).strip()
+    expected_pinfo = dedent(
+        f"""Signature: foo(arg)
+    Docstring: Bar docstring
+    File:      {tmp_file.absolute()}
+    Type:      function"""
+            )
+    assert untagged.endswith(expected_pinfo), untagged
+
+    # pinfo2
+    rpdb.onecmd(rpdb.precmd("foo??"))
+    magic_foo_qmark2_output = capsys.readouterr().out
+    rpdb.onecmd(rpdb.precmd("%pinfo2 foo"))
+    magic_pinfo2_foo_output = capsys.readouterr().out
+    assert magic_pinfo2_foo_output == magic_foo_qmark2_output
