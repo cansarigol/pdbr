@@ -23,6 +23,7 @@ def untag(s):
     'foo(arg)'
     """
     s = s.replace("\x07", "")
+    s = s.replace("\x1b[?2004l", "")
     return TAG_RE.sub("", s)
 
 
@@ -99,7 +100,6 @@ class TestPdbrChildProcess:
     def test_timeit(self, pdbr_child_process):
         pdbr_child_process.sendline("%timeit -n 1 -r 1 pass")
         pdbr_child_process.expect_exact("std. dev. of 1 run, 1 loop each)")
-
 
 
 def test_onecmd_time_line_magic(capsys, RichIPdb):
@@ -214,7 +214,7 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     expected_pinfo2 = (
         dedent(
             f"""Signature: foo(arg)
-    Source:   
+    Source:
     %s
     File:      {tmp_file.absolute()}
     Type:      function"""
