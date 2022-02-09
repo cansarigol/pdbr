@@ -212,17 +212,17 @@ def test_TerminalPdb_magics_override(tmp_path, capsys, RichIPdb):
     rpdb.onecmd("%pinfo2 foo")
     magic_pinfo2_foo_output = capsys.readouterr().out
     untagged = untag(magic_pinfo2_foo_output).strip()
-    expected_pinfo2 = (
+    expected_pinfo2 = re.compile(
         dedent(
-            f"""Signature: foo(arg)
-    Source:
+            rf"""Signature: foo\(arg\)
+    Source:\s*
     %s
     File:      {tmp_file.absolute()}
     Type:      function"""
         )
-        % tmp_file_content
+        % re.escape(tmp_file_content)
     )
-    assert untagged == expected_pinfo2, untagged
+    assert expected_pinfo2.fullmatch(untagged), untagged
 
     # rpdb.onecmd("%psource foo")
     # rpdb.onecmd("foo?")
