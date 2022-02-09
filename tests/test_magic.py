@@ -97,7 +97,6 @@ class TestPdbrChildProcess:
         pdbr_child_process.expect_exact("std. dev. of 1 run, 1 loop each)")
 
 
-
 def test_onecmd_time_line_magic(capsys, RichIPdb):
     RichIPdb().onecmd("%time pass")
     captured = capsys.readouterr()
@@ -148,6 +147,7 @@ def test_no_zombie_lastcmd(capsys, RichIPdb):
     assert captured.out.endswith(Path.cwd().absolute().as_posix() + "\n")
     assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
 
+
 @pytest.mark.skip("Doesn't work yet")
 def test_TerminalPdb_magics_override(capsys, RichIPdb):
     rpdb = RichIPdb(stdout=sys.stdout)
@@ -155,7 +155,7 @@ def test_TerminalPdb_magics_override(capsys, RichIPdb):
     """Bar docstring"""
     pass
     '''
-    
+
     rpdb.onecmd(function_block)
     rpdb.onecmd("%pdef foo")
     captured = capsys.readouterr()
@@ -166,4 +166,3 @@ def test_TerminalPdb_magics_override(capsys, RichIPdb):
     rpdb.onecmd("%pinfo foo")
     rpdb.onecmd("%pinfo2 foo")
     rpdb.onecmd("%psource foo")
-    
