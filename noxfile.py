@@ -22,15 +22,24 @@ def check(session, reuse_venv=True):
 @nox.session(python=["3.7", "3.8", "3.9", "3.10"])
 def test(session, reuse_venv=True):
     session.install(
+        ".",
         "pytest",
         "pytest-cov",
         "rich",
         "icecream",
         "prompt_toolkit",
         "sqlparse",
-        "IPython",
+        "IPython==7.32.0",
     )
-    session.run("pytest", "--cov-report", "term-missing", "--cov=pdbr", "tests")
+    session.run(
+        "pytest",
+        "--cov-report",
+        "term-missing",
+        "--cov=pdbr",
+        "--capture=no",
+        "--disable-warnings",
+        "tests",
+    )
 
 
 @nox.session

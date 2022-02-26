@@ -74,8 +74,8 @@ def pdbr_child_process(tmp_path) -> spawn:
     )
     child.expect("foo.py")
     child.expect("breakpoint")
-    child.sendeof()
-    child.timeout = 3
+    # child.sendeof()
+    child.timeout = 10
     return child
 
 
@@ -115,7 +115,7 @@ class TestPdbrChildProcess:
     def test_time(self, pdbr_child_process):
         pdbr_child_process.sendline("from time import sleep")
         pdbr_child_process.sendline("%time sleep(0.1)")
-        pdbr_child_process.expect("CPU time")
+        pdbr_child_process.expect(re.compile("CPU times: .+"))
         pdbr_child_process.expect("Wall time: 100 ms")
 
     def test_timeit(self, pdbr_child_process):
@@ -265,13 +265,13 @@ def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     untagged = untag(magic_foo_qmark_output).strip()
     expected_pinfo = re.compile(
         dedent(
-            rf"""Signature: foo\(arg\)
+            rf""".*Signature: foo\(arg\)
     Docstring: Foo docstring
     File:      /tmp/.*/{tmp_file.name}
     Type:      function"""
         )
     )
-    assert expected_pinfo.fullmatch(untagged), untagged
+    assert expected_pinfo.fullmatch(untagged), f"untagged = {untagged!r}"
 
     # pinfo2
     rpdb.onecmd(rpdb.precmd("foo??"))

@@ -361,6 +361,16 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
+        def precmd(self, line):
+            if line.endswith("??"):
+                line = "pinfo2 " + line[:-2]
+            elif line.endswith("?"):
+                line = "pinfo " + line[:-1]
+
+            line = super().precmd(line)
+
+            return line
+
         def onecmd(self, line: str) -> bool:
             """
             Invokes 'run_magic()' if the line starts with a '%'.
@@ -441,12 +451,10 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 # This is indeed the case with do_pdef, do_pdoc etc,
                 # which are defined by our base class (IPython.core.debugger.Pdb).
                 result = getattr(self, f"do_{magic_name}")(arg)
-                # TODO: test for zombie lastcmd in this case
             else:
                 magic_fn = self.shell.find_line_magic(magic_name)
                 if not magic_fn:
                     self.error(f"Line Magic %{magic_name} not found")
-                    # TODO: test for zombie lastcmd in this case
                     return ""
                 if magic_name in ("time", "timeit"):
                     result = magic_fn(
