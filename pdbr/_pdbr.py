@@ -367,9 +367,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             elif line.endswith("?"):
                 line = "pinfo " + line[:-1]
 
-            line = super().precmd(line)
-
-            return line
+            return super().precmd(line)
 
         def onecmd(self, line: str) -> bool:
             """
