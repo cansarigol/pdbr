@@ -12,14 +12,15 @@ from rich.theme import Theme
 
 from pdbr._pdbr import rich_pdb_klass
 
-NUMBER_RE = "[\d.e+_,-]+"  # Matches 1e+03, 1.0e-03, 1_000, 1,000
+NUMBER_RE = r"[\d.e+_,-]+"  # Matches 1e+03, 1.0e-03, 1_000, 1,000
 
 TAG_RE = re.compile(r"\x1b[\[\]]+[\dDClhJt;?]+m?")
 
 
 def untag(s):
     """Not perfect, but does the job.
-    >>> untag('\x1b[0mfoo\x1b[0m\x1b[0;34m(\x1b[0m\x1b[0marg\x1b[0m\x1b[0;34m)\x1b[0m\x1b[0;34m\x1b[0m\x1b[0;34m\x1b[0m\x1b[0m')
+    >>> untag('\x1b[0mfoo\x1b[0m\x1b[0;34m(\x1b[0m\x1b[0marg\x1b[0m\x1b[0;34m)\x1b[0m'
+    >>>       '\x1b[0;34m\x1b[0m\x1b[0;34m\x1b[0m\x1b[0m')
     'foo(arg)'
     """
     s = s.replace("\x07", "")
@@ -47,7 +48,7 @@ TMP_FILE_CONTENT = '''def foo(arg):
 
 
 def import_tmp_file(rpdb, tmp_path: Path, file_content=TMP_FILE_CONTENT) -> Path:
-    """Creates a temporary file, writes `file_content` to it and makes pdbr import it."""
+    """Creates a temporary file, writes `file_content` to it and makes pdbr import it"""
     tmp_file = tmp_path / "foo.py"
     tmp_file.write_text(file_content)
 
@@ -127,8 +128,10 @@ def test_onecmd_time_line_magic(capsys, RichIPdb):
     captured = capsys.readouterr()
     output = captured.out
     assert re.search(
-        rf"CPU times: user {NUMBER_RE} [mµn]s, sys: {NUMBER_RE} [mµn]s, total: {NUMBER_RE} [mµn]s\n"
-        rf"Wall time: {NUMBER_RE} [mµn]s",
+        f"CPU times: user {NUMBER_RE} [mµn]s, "
+        f"sys: {NUMBER_RE} [mµn]s, "
+        f"total: {NUMBER_RE} [mµn]s\n"
+        f"Wall time: {NUMBER_RE} [mµn]s",
         output,
     )
 
@@ -137,7 +140,7 @@ def test_onecmd_unsupported_cell_magic(capsys, RichIPdb):
     RichIPdb().onecmd("%%time pass")
     captured = capsys.readouterr()
     output = captured.out
-    error = f"Cell magics (multiline) are not yet supported. Use a single '%' instead."
+    error = "Cell magics (multiline) are not yet supported. Use a single '%' instead."
     assert output == "*** " + error + "\n"
     cmd = "%%time"
     stop = RichIPdb().onecmd(cmd)
@@ -175,8 +178,9 @@ def test_no_zombie_lastcmd(capsys, RichIPdb):
 
 def test_IPython_Pdb_magics_implementation(tmp_path, capsys, RichIPdb):
     """
-    We test do_{magic} methods that are concretely implemented by IPython.core.debugger.Pdb,
-    and don't default to IPython's 'InteractiveShell.run_line_magic()' like the other magics.
+    We test do_{magic} methods that are concretely implemented by
+    IPython.core.debugger.Pdb, and don't default to IPython's
+    'InteractiveShell.run_line_magic()' like the other magics.
     """
     from IPython.utils.text import dedent
 
@@ -261,7 +265,7 @@ def test_expr_questionmark_pinfo(tmp_path, capsys, RichIPdb):
     untagged = untag(magic_foo_qmark_output).strip()
     expected_pinfo = re.compile(
         dedent(
-            f"""Signature: foo\(arg\)
+            rf"""Signature: foo\(arg\)
     Docstring: Foo docstring
     File:      /tmp/.*/{tmp_file.name}
     Type:      function"""
