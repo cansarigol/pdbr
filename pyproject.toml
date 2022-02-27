@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.6.9"
+version = "0.7.0"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -22,7 +22,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7.12"
+python = "^3.7.9"
 rich = "^10.0.0"
 celery = {version = "^5.2.2", optional = true}
 ipython = {version = "^7.7", optional = true}
