@@ -361,6 +361,37 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         def message(self, msg):
             self._print(msg)
 
+        def precmd(self, line):
+            if line.endswith("??"):
+                line = "pinfo2 " + line[:-2]
+            elif line.endswith("?"):
+                line = "pinfo " + line[:-1]
+
+            return super().precmd(line)
+
+        def onecmd(self, line: str) -> bool:
+            """
+            Invokes 'run_magic()' if the line starts with a '%'.
+            The loop stops of this function returns True.
+            (unless an overridden 'postcmd()' behaves differently)
+            """
+            try:
+                line = line.strip()
+                if line.startswith("%"):
+                    if line.startswith("%%"):
+                        self.error(
+                            "Cell magics (multiline) are not yet supported. "
+                            "Use a single '%' instead."
+                        )
+                        return False
+                    self.run_magic(line[1:])
+                    return False
+                return super().onecmd(line)
+
+            except Exception as e:
+                self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
+                return False
+
         def _print(
             self, val, prefix=None, style=None, print_layout=True, dont_escape=False
         ):
@@ -406,5 +437,33 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             filename = frame.f_code.co_filename
             self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
             # vds: <<
+
+        def run_magic(self, line) -> str:
+            """
+            Parses the line and runs the appropriate magic function.
+            Assumes that the line is without a leading '%'.
+            """
+            magic_name, arg, line = self.parseline(line)
+            if hasattr(self, f"do_{magic_name}"):
+                # We want to use do_{magic_name} methods if defined.
+                # This is indeed the case with do_pdef, do_pdoc etc,
+                # which are defined by our base class (IPython.core.debugger.Pdb).
+                result = getattr(self, f"do_{magic_name}")(arg)
+            else:
+                magic_fn = self.shell.find_line_magic(magic_name)
+                if not magic_fn:
+                    self.error(f"Line Magic %{magic_name} not found")
+                    return ""
+                if magic_name in ("time", "timeit"):
+                    result = magic_fn(
+                        arg,
+                        local_ns={**self.curframe_locals, **self.curframe.f_globals},
+                    )
+                else:
+                    result = magic_fn(arg)
+            if result:
+                result = str(result)
+                self._print(result)
+            return ""
 
     return RichPdb

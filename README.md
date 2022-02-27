@@ -104,7 +104,16 @@ rlwrap -H '~/.pdbr_history' pdbr_telnet localhost 6899
 
 ## IPython
 
-Being able to use [ipython](https://ipython.readthedocs.io/), install pdbr with it like below or just install your own version.
+`pdbr` integrates with [IPython](https://ipython.readthedocs.io/).
+
+This makes [`%magics`](https://ipython.readthedocs.io/en/stable/interactive/magics.html) available, for example:
+
+```python
+(Pdbr) %timeit range(100)
+104 ns ± 2.05 ns per loop (mean ± std. dev. of 7 runs, 10,000,000 loops each)
+```
+
+To enable `IPython` features, install it separately, or like below:
 
 ```
 pip install pdbr[ipython]
