@@ -15,7 +15,7 @@ repos:
       - id: python-check-blanket-noqa
       - id: python-use-type-annotations
   - repo: https://github.com/jendrikseipp/vulture
-    rev: v2.3
+    rev: v2.4
     hooks:
       - id: vulture
   - repo: https://github.com/psf/black
