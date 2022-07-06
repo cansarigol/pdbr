@@ -43,7 +43,7 @@ def test(session, reuse_venv=True):
 
 
 @nox.session
-@nox.parametrize("django", ["1.8", "1.11", "2.0", "2.2", "3.0"])
+@nox.parametrize("django", ["1.11", "2.0", "2.2", "3.0"])
 def django_test(session, django, reuse_venv=True):
     session.install(f"django=={django}", "rich", "pytest", "sqlparse")
     session.run("python", "runtests.py")
