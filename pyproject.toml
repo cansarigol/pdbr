@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.7.1"
+version = "0.7.2"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -25,7 +25,7 @@ classifiers = [
 python = "^3.7.9"
 rich = "^12.0.0"
 celery = {version = "^5.2.2", optional = true}
-ipython = {version = "^7.7", optional = true}
+ipython = {version = "*", optional = true}
 icecream = "^2.1.0"
 pyreadline = {version="^2.1", markers="sys_platform == 'win32'"}
 sqlparse = "^0.4.2"
