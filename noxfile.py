@@ -19,7 +19,7 @@ def check(session, reuse_venv=True):
     session.run("pre-commit", "run", "--all-files")
 
 
-@nox.session(python=["3.7", "3.8", "3.9", "3.10"])
+@nox.session(python=["3.7", "3.8", "3.9.0", "3.10"])
 def test(session, reuse_venv=True):
     session.install(
         ".",
@@ -29,7 +29,7 @@ def test(session, reuse_venv=True):
         "icecream",
         "prompt_toolkit",
         "sqlparse",
-        "IPython==7.32.0",
+        "IPython",
     )
     session.run(
         "pytest",

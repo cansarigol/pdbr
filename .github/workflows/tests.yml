@@ -7,27 +7,43 @@ on:
     branches: ["master"]
 
 jobs:
-  tests:
-    name: "Check lint and tests"
-    runs-on: ${{ matrix.platform }}
-
-    strategy:
-      matrix:
-        platform: [ubuntu-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9.0", "3.10"]
-
+  check:
+    name: "Check"
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@master
-      - name: Set up Python "${{ matrix.python-version }}"
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v3
         with:
-          python-version: "${{ matrix.python-version }}"
+          python-version: '3.10'
       - name: Install nox
         run: |
-          pip install nox
+          pip install nox --upgrade
       - name: Run check
         run: |
           nox --sessions check
+
+  test:
+    name: "Tests"
+    runs-on: ${{ matrix.platform }}
+    needs: check
+
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.7", "3.8", "3.9.0", "3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python "${{ matrix.python-version }}"
+        uses: actions/setup-python@v3
+        with:
+          python-version: "${{ matrix.python-version }}"
+
+      - name: Install nox
+        run: |
+          pip install nox --upgrade
       - name: Run test
         run: |
-          nox --sessions test
+          nox --sessions test-${{ matrix.python-version }}
