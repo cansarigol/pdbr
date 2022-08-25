@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.7.2"
+version = "0.7.3"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -43,7 +43,7 @@ pdbr = 'pdbr.cli:shell'
 pdbr_telnet = 'pdbr.cli:telnet'
 
 [build-system]
-requires = ["poetry>=1.0.0"]
+requires = ["poetry>=1.0.0", "setuptools"]
 build-backend = "poetry.masonry.api"
 
 [tool.vulture]
@@ -52,3 +52,10 @@ min_confidence = 80
 paths = ["pdbr", "tests"]
 sort_by_size = true
 verbose = false
+
+[project]
+name = "pdbr"
+version = "0.7.3"
+
+[tool.setuptools]
+py-modules = []
