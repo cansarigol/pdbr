@@ -9,3 +9,6 @@ celery:
 
 build:
 	docker build -t pdbr .
+
+act:
+	act -r -j test --container-architecture linux/amd64

@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9.0", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "~3.11.0-0"]
 
     steps:
       - uses: actions/checkout@v3
@@ -46,4 +46,4 @@ jobs:
           pip install nox --upgrade
       - name: Run test
         run: |
-          nox --sessions test-${{ matrix.python-version }}
+          nox --sessions test
