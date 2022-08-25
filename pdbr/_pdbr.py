@@ -83,7 +83,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 self.debugger_history = history_file
 
             func = super().pt_init
-            func_args = inspect.getargspec(super().pt_init).args
+            func_args = inspect.getfullargspec(super().pt_init).args
             if "pt_session_options" in func_args:
                 func(pt_session_options)
             else:
