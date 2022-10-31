@@ -8,17 +8,13 @@ try:
     import readline
 except ImportError:
     try:
-        from pyreadline import Readline
+        from pyreadline3 import Readline
 
         readline = Readline()
     except ModuleNotFoundError:
         readline = None
-except AttributeError as e:
-    # https://github.com/pyreadline/pyreadline/issues/65
-    if "module 'collections' has no attribute 'Callable'" in str(e):
-        readline = None
-    else:
-        raise
+except AttributeError:
+    readline = None
 
 
 def set_history_file(history_file):
