@@ -26,7 +26,7 @@ def no_global_config():
         setup_file.unlink()
 
     if backup_file.exists():
-        backup_file.rename(str(setup_file))
+        backup_file.rename(setup_file)
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def test_local_config():
         os.chdir(root_dir)
 
 
-def test_read_config(no_global_config):
+def test_read_config():
     pdbr_history = str(Path.home() / ".pdbr_history")
     pdbr_history_ipython = str(Path.home() / ".pdbr_history_ipython")
 
