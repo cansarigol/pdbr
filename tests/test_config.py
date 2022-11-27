@@ -10,7 +10,7 @@ root_dir = Path(__file__).parents[1]
 
 
 @pytest.fixture
-def no_global_config():
+def dummy_global_config():
     XDG_CONFIG_HOME = Path.home() / ".config"
     pdbr_dir = XDG_CONFIG_HOME / "pdbr"
     pdbr_dir.mkdir(exist_ok=True)
@@ -20,26 +20,20 @@ def no_global_config():
     if setup_file.exists():
         setup_file.rename(backup_file)
 
-    yield setup_file
-
-    if setup_file.exists():
-        setup_file.unlink()
-
-    if backup_file.exists():
-        backup_file.rename(setup_file)
-
-
-@pytest.fixture
-def dummy_global_config(no_global_config):
-    setup_file = no_global_config
-
     with open(setup_file, "wt") as f:
         f.writelines(["[pdbr]\n", "theme = ansi_light"])
 
     yield setup_file
 
+    setup_file.unlink()
+
+    if backup_file.exists():
+        backup_file.rename(setup_file)
+
 
 def test_global_config(dummy_global_config):
+    assert dummy_global_config.exists()
+
     try:
         with TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
