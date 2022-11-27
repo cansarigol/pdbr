@@ -58,8 +58,10 @@ Get the local variables list as tree.
 ![](/images/image5.png)
 
 ## Config
+Config is specified in **setup.cfg** and can be local or global. Local config (current working directory) has precedence over global (default) one. Global config must be located in `$XDG_CONFIG_HOME/pdbr/` directory.
+
 ### Style
-In order to use Rich's traceback, style, and theme, set **setup.cfg**.
+In order to use Rich's traceback, style, and theme:
 
 ```
 [pdbr]
@@ -69,7 +71,7 @@ theme = friendly
 ```
 
 ### History
-**store_history** setting is used to keep and reload history, even the prompt is closed and opened again.
+**store_history** setting is used to keep and reload history, even the prompt is closed and opened again:
 ```
 [pdbr]
 ...
