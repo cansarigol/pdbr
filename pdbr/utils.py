@@ -48,7 +48,13 @@ def read_config():
 
     config = configparser.ConfigParser()
     config.sections()
-    config.read("setup.cfg")
+
+    setup_filename = "setup.cfg"
+    global_config_path = Path.home() / ".config" / "pdbr" / setup_filename
+    cwd_config_path = Path.cwd() / setup_filename
+    config_path = cwd_config_path.exists() and cwd_config_path or global_config_path
+
+    config.read(config_path)
     if "pdbr" in config:
         if "style" in config["pdbr"]:
             style = config["pdbr"]["style"]
