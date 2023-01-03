@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.7.5"
+version = "0.7.6"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -24,12 +24,12 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7.9"
-rich = "^12.0.0"
+rich = "*"
 celery = {version = "^5.2.2", optional = true}
 ipython = {version = "*", optional = true}
-icecream = "^2.1.0"
 pyreadline3 = {version = "^3.4.1", markers = "sys_platform == 'win32'"}
-sqlparse = "^0.4.2"
+icecream = "*"
+sqlparse = "*"
 
 [tool.poetry.dev-dependencies]
 nox = "^2020.5.24"
@@ -55,7 +55,7 @@ verbose = false
 
 [project]
 name = "pdbr"
-version = "0.7.4"
+version = "0.7.6"
 
 [tool.setuptools]
 py-modules = []
