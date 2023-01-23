@@ -43,13 +43,9 @@ def test_print_with_style(capsys, RichPdb):
 
 
 def test_print_without_escape_tag(capsys, RichPdb):
-    RichPdb()._print("msg[tag]")
+    RichPdb()._print("[blue]msg[/]")
     captured = capsys.readouterr()
-    assert captured.out == "msg\x1b[1m[\x1b[0mtag\x1b[1m]\x1b[0m\n"
-
-    RichPdb()._print("msg[tag]", dont_escape=True)
-    captured = capsys.readouterr()
-    assert captured.out == "msg\n"
+    assert captured.out == "\x1b[34mmsg\x1b[0m\n"
 
 
 def test_onecmd(capsys, RichPdb):

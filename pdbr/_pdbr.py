@@ -119,7 +119,6 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                     ),
                     style="warning",
                     print_layout=False,
-                    dont_escape=True,
                 )
 
         do_help.__doc__ = base.do_help.__doc__
@@ -392,14 +391,12 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
                 return False
 
-        def _print(
-            self, val, prefix=None, style=None, print_layout=True, dont_escape=False
-        ):
+        def _print(self, val, prefix=None, style=None, print_layout=True):
             if val == "--Return--":
                 return
 
-            if isinstance(val, str) and dont_escape is False:
-                val = markup.escape(val)
+            if isinstance(val, str) and "[" in val:
+                val = markup.render(val)
 
             kwargs = {"style": str(style)} if style else {}
             args = (prefix, val) if prefix else (val,)
