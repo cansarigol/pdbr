@@ -419,21 +419,27 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             )
 
         def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
-            """
-            Remove ipython color format.
-            """
-            if base == Pdb or is_celery:
-                Pdb.print_stack_entry(self, frame_lineno, prompt_prefix)
-                return
-            self.message(
-                ANSI_ESCAPE.sub("", self.format_stack_entry(frame_lineno, "", context))
-            )
+            def print_syntax(*args):
+                # Remove color format.
+                self._print(
+                    Syntax(
+                        ANSI_ESCAPE.sub("", self.format_stack_entry(*args)),
+                        "python",
+                        theme=self._theme or DEFAULT_THEME,
+                    ),
+                    print_layout=False,
+                )
 
-            # vds: >>
-            frame, lineno = frame_lineno
-            filename = frame.f_code.co_filename
-            self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
-            # vds: <<
+            if base == Pdb or is_celery:
+                print_syntax(frame_lineno, prompt_prefix)
+            else:
+                print_syntax(frame_lineno, "", context)
+
+                # vds: >>
+                frame, lineno = frame_lineno
+                filename = frame.f_code.co_filename
+                self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
+                # vds: <<
 
         def run_magic(self, line) -> str:
             """

@@ -1,5 +1,4 @@
 import inspect
-import os
 import re
 import sys
 from pathlib import Path
@@ -63,17 +62,13 @@ def pdbr_child_process(tmp_path):
     from pexpect import spawn
 
     file = tmp_path / "foo.py"
-    file.write_text("breakpoint()")
-    env = os.environ.copy()
-    env["IPY_TEST_SIMPLE_PROMPT"] = "1"
+    file.write_text("import pdbr;breakpoint()")
 
     child = spawn(
-        str(Path(sys.executable).parent / "pdbr"),
+        str(Path(sys.executable)),
         [str(file)],
-        env=env,
         encoding="utf-8",
     )
-    child.expect("foo.py")
     child.expect("breakpoint")
     child.timeout = 10
     return child
