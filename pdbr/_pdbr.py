@@ -430,7 +430,9 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                     print_layout=False,
                 )
 
-            if base == Pdb or is_celery:
+            if is_celery:
+                Pdb.print_stack_entry(self, frame_lineno, prompt_prefix)
+            elif base == Pdb:
                 print_syntax(frame_lineno, prompt_prefix)
             else:
                 print_syntax(frame_lineno, "", context)
