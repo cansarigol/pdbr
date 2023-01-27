@@ -419,21 +419,19 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             )
 
         def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
-            def print_syntax(*args):
-                # Remove color format.
+            if base == Pdb or is_celery:
+                Pdb.print_stack_entry(self, frame_lineno, prompt_prefix)
+            else:
                 self._print(
                     Syntax(
-                        ANSI_ESCAPE.sub("", self.format_stack_entry(*args)),
+                        ANSI_ESCAPE.sub(
+                            "", self.format_stack_entry(frame_lineno, "", context)
+                        ),
                         "python",
                         theme=self._theme or DEFAULT_THEME,
                     ),
                     print_layout=False,
                 )
-
-            if base == Pdb or is_celery:
-                print_syntax(frame_lineno, prompt_prefix)
-            else:
-                print_syntax(frame_lineno, "", context)
 
                 # vds: >>
                 frame, lineno = frame_lineno
