@@ -31,9 +31,6 @@ pyreadline3 = {version = "^3.4.1", markers = "sys_platform == 'win32'"}
 icecream = "*"
 sqlparse = "*"
 
-[tool.poetry.dev-dependencies]
-nox = "^2020.5.24"
-
 [tool.poetry.extras]
 celery = ["celery"]
 ipython = ["ipython"]
@@ -41,6 +38,10 @@ ipython = ["ipython"]
 [tool.poetry.scripts]
 pdbr = 'pdbr.cli:shell'
 pdbr_telnet = 'pdbr.cli:telnet'
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.0.261"
+nox = "^2022.11.21"
 
 [build-system]
 requires = ["poetry>=1.0.0", "setuptools"]
@@ -59,3 +60,16 @@ version = "0.8.2"
 
 [tool.setuptools]
 py-modules = []
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "PIE", # flake8-pie
+    "ERA", # eradicate
+]
+line-length = 88
