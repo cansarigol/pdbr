@@ -1,8 +1,9 @@
 import inspect
 import io
 import re
+from inspect import getsourcelines
 from pathlib import Path
-from pdb import Pdb, getsourcelines
+from pdb import Pdb
 
 import sqlparse
 from rich import box, markup
