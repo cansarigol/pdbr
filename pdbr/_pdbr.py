@@ -1,8 +1,14 @@
 import inspect
 import io
 import re
+
 from pathlib import Path
-from pdb import Pdb, getsourcelines
+from pdb import Pdb
+
+try:
+    from inspect import getsourcelines  # Python 3.11+
+except ImportError:
+    from pdb import getsourcelines
 
 import sqlparse
 from rich import box, markup
