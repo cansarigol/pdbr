@@ -1,8 +1,8 @@
 lint:
-	poetry run nox --sessions lint
+	sh scripts/lint
 
 test:
-	poetry run nox --sessions check test django_test
+	sh scripts/test
 
 celery:
 	celery -A tasks worker --loglevel=info

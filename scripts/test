@@ -1,0 +1,4 @@
+#!/bin/sh -e
+pre-commit run --all-files
+
+poetry run nox --sessions test django_test
