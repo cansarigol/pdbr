@@ -1,6 +1,0 @@
-## arrow up
-"\e[A":history-search-backward
-"\x1b[A":history-search-backward
-## arrow down
-"\e[B":history-search-forward
-"\x1b[B":history-search-backward
