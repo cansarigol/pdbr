@@ -396,7 +396,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             if val == "--Return--":
                 return
 
-            if isinstance(val, str) and "[" in val:
+            if isinstance(val, str) and ("[0m" in val or "[/" in val):
                 val = markup.render(val)
 
             kwargs = {"style": str(style)} if style else {}
