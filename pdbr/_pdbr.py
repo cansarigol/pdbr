@@ -1,7 +1,6 @@
 import inspect
 import io
 import re
-from inspect import getsourcelines
 from pathlib import Path
 from pdb import Pdb
 
@@ -164,7 +163,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             List the whole source code for the current function or frame.
             """
             try:
-                lines, lineno = self.getsourcelines(self.curframe)
+                lines, lineno = self._getsourcelines(self.curframe)
                 last = lineno + len(lines)
                 self._print(
                     self._get_syntax_for_list((lineno, last)), print_layout=False
@@ -173,6 +172,20 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 self.error("could not get source code")
 
         do_ll = do_longlist
+
+        def do_source(self, arg):
+            """source expression
+            Try to get source code for the given object and display it.
+            """
+            try:
+                obj = self._getval(arg)
+                lines, lineno = self._getsourcelines(obj)
+                last = lineno + len(lines)
+                self._print(
+                    self._get_syntax_for_list((lineno, last)), print_layout=False
+                )
+            except BaseException as err:
+                self.error(err)
 
         def do_search(self, arg):
             """search | src
@@ -188,7 +201,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             else:
                 self._latest_search_arg = arg
 
-            lines, lineno = getsourcelines(self.curframe)
+            lines, lineno = self._getsourcelines(self.curframe)
             indexes = [index for index, line in enumerate(lines, lineno) if arg in line]
 
             if len(indexes) > 0:
@@ -201,6 +214,11 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                 self.error(f"Search failed: '{arg}' not found")
 
         do_src = do_search
+
+        def _getsourcelines(self, obj):
+            lines, lineno = inspect.getsourcelines(obj)
+            lineno = max(1, lineno)
+            return lines, lineno
 
         def get_varstable(self):
             variables = self._get_variables()
