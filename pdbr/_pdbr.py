@@ -155,9 +155,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             List 11 lines source code for the current file.
             """
             try:
-                self._print(
-                    self._get_syntax_for_list(), print_layout=False
-                )
+                self._print(self._get_syntax_for_list(), print_layout=False)
             except BaseException:
                 self.error("could not get source code")
 
@@ -168,7 +166,9 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             try:
                 lines, lineno = self.getsourcelines(self.curframe)
                 last = lineno + len(lines)
-                self._print(self._get_syntax_for_list((lineno, last)), print_layout=False)
+                self._print(
+                    self._get_syntax_for_list((lineno, last)), print_layout=False
+                )
             except BaseException:
                 self.error("could not get source code")
 
