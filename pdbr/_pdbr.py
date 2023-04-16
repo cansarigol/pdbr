@@ -125,9 +125,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
         do_help.__doc__ = base.do_help.__doc__
         do_h = do_help
 
-        def _get_syntax_for_list(self, with_line_range=False):
-            line_range = None
-            if with_line_range:
+        def _get_syntax_for_list(self, line_range=None):
+            if not line_range:
                 first = max(1, self.curframe.f_lineno - 5)
                 line_range = first, first + 10
             filename = self.curframe.f_code.co_filename
@@ -156,9 +155,7 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             List 11 lines source code for the current file.
             """
             try:
-                self._print(
-                    self._get_syntax_for_list(with_line_range=True), print_layout=False
-                )
+                self._print(self._get_syntax_for_list(), print_layout=False)
             except BaseException:
                 self.error("could not get source code")
 
@@ -167,7 +164,11 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             List the whole source code for the current function or frame.
             """
             try:
-                self._print(self._get_syntax_for_list(), print_layout=False)
+                lines, lineno = self.getsourcelines(self.curframe)
+                last = lineno + len(lines)
+                self._print(
+                    self._get_syntax_for_list((lineno, last)), print_layout=False
+                )
             except BaseException:
                 self.error("could not get source code")
 
