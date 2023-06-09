@@ -13,7 +13,7 @@ root_dir = Path(__file__).parents[1]
 def dummy_global_config():
     XDG_CONFIG_HOME = Path.home() / ".config"
     pdbr_dir = XDG_CONFIG_HOME / "pdbr"
-    pdbr_dir.mkdir(exist_ok=True)
+    pdbr_dir.mkdir(exist_ok=True, parents=True)
     setup_file = pdbr_dir / "setup.cfg"
     backup_file = pdbr_dir / (setup_file.stem + ".cfg.bak")
 
