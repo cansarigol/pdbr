@@ -58,11 +58,16 @@ def read_config():
     if "pdbr" in config:
         if "style" in config["pdbr"]:
             style = config["pdbr"]["style"]
+
         if "theme" in config["pdbr"]:
             theme = config["pdbr"]["theme"]
+
         if "use_traceback" in config["pdbr"]:
             if config["pdbr"]["use_traceback"].lower() == "true":
                 set_traceback(theme)
+        else:
+            set_traceback(theme)
+
         if "store_history" in config["pdbr"]:
             store_history = config["pdbr"]["store_history"]
 
