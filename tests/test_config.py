@@ -34,30 +34,24 @@ def dummy_global_config():
 def test_global_config(dummy_global_config):
     assert dummy_global_config.exists()
 
-    try:
-        with TemporaryDirectory() as tmpdir:
-            os.chdir(tmpdir)
+    tmpdir = TemporaryDirectory()
+    os.chdir(tmpdir.name)
 
-            # Second element of tuple is theme
-            assert read_config()[1] == "ansi_light"
-
-    finally:
-        os.chdir(root_dir)
+    # Second element of tuple is theme
+    assert read_config()[1] == "ansi_light"
+    os.chdir(root_dir)
 
 
 def test_local_config():
-    try:
-        with TemporaryDirectory() as tmpdir:
-            os.chdir(tmpdir)
-            setup_file = Path(tmpdir) / "setup.cfg"
+    tmpdir = TemporaryDirectory()
+    os.chdir(tmpdir.name)
+    setup_file = Path(tmpdir.name) / "setup.cfg"
 
-            with open(setup_file, "wt") as f:
-                f.writelines(["[pdbr]\n", "theme = ansi_dark"])
+    with open(setup_file, "wt") as f:
+        f.writelines(["[pdbr]\n", "theme = ansi_dark"])
 
-            assert read_config()[1] == "ansi_dark"
-
-    finally:
-        os.chdir(root_dir)
+    assert read_config()[1] == "ansi_dark"
+    os.chdir(root_dir)
 
 
 def test_read_config():
