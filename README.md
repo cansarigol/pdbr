@@ -128,6 +128,25 @@ In order to use `pdbr` with pytest `--pdb` flag, add `addopts` setting in your p
 [pytest]
 addopts: --pdbcls=pdbr:RichPdb
 ```
+
+## sys.excepthook
+The `sys.excepthook` is a Python system hook that provides a way to customize the behavior when an unhandled exception occurs. Since `pdbr` use  automatic traceback handler feaure of `rich`, formatting exception print is not necessary if `pdbr` module is already imported.
+
+In order to use post-mortem or perform other debugging features of `pdbr`,  override `sys.excepthook` with a function that will act as your custom excepthook:
+```python
+import sys
+import pdbr
+
+def custom_excepthook(exc_type, exc_value, exc_traceback):
+    pdbr.post_mortem(exc_traceback, exc_value)
+
+    # [Optional] call the original excepthook as well
+    sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+sys.excepthook = custom_excepthook
+```
+Now, whenever an unhandled exception occurs, `pdbr` will be triggered, allowing you to debug the issue interactively.
+
 ## Context Decorator
 `pdbr_context` and `apdbr_context` (`asyncio` corresponding) can be used as **with statement** or **decorator**. It calls `post_mortem` if `traceback` is not none.
 
