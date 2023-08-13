@@ -235,13 +235,11 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             ]
             return table
 
-        def do_vars(self, arg):
+        def do_v(self, arg):
             """v(ars)
             List of local variables
             """
             self._print(self.get_varstable(), print_layout=False)
-
-        do_v = do_vars
 
         def get_varstree(self):
             variables = self._get_variables()
