@@ -3,7 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/pdbr.svg)](https://pypi.org/project/pdbr/) [![Python Version](https://img.shields.io/pypi/pyversions/pdbr.svg)](https://pypi.org/project/pdbr/) [![](https://github.com/cansarigol/pdbr/workflows/Test/badge.svg)](https://github.com/cansarigol/pdbr/actions?query=workflow%3ATest) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/cansarigol/pdbr/master.svg)](https://results.pre-commit.ci/latest/github/cansarigol/pdbr/master)
 
 
-pdbr is intended to make the PDB results more colorful. it uses [Rich](https://github.com/willmcgugan/rich) library to carry out that.
+`pdbr` is intended to make the PDB results more colorful. it uses [Rich](https://github.com/willmcgugan/rich) library to carry out that.
 
 
 ## Installing
@@ -32,15 +32,13 @@ import pdbr
 ```
 
 ## New commands
-### (ic)ecream
-🍦 [Icecream](https://github.com/gruns/icecream) print.
 ### (i)nspect / inspectall | ia
 [rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
 ### search | src
 Search a phrase in the current frame.
 In order to repeat the last one, type **/** character as arg.
 ### sql
-Display value in sql format.
+Display value in sql format. Don't forget to install [sqlparse](https://github.com/andialbrecht/sqlparse) package.
 ![](/images/image13.png)
 
 It can be used for Django model queries as follows.
@@ -130,7 +128,7 @@ addopts: --pdbcls=pdbr:RichPdb
 ```
 
 ## sys.excepthook
-The `sys.excepthook` is a Python system hook that provides a way to customize the behavior when an unhandled exception occurs. Since `pdbr` use  automatic traceback handler feaure of `rich`, formatting exception print is not necessary if `pdbr` module is already imported.
+The `sys.excepthook` is a Python system hook that provides a way to customize the behavior when an unhandled exception occurs. Since `pdbr` use  automatic traceback handler feature of `rich`, formatting exception print is not necessary if `pdbr` module is already imported.
 
 In order to use post-mortem or perform other debugging features of `pdbr`,  override `sys.excepthook` with a function that will act as your custom excepthook:
 ```python

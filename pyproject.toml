@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.8.6"
+version = "0.8.7"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -15,7 +15,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -25,14 +24,10 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7.9"
 rich = "*"
-celery = {version = "^5.2.2", optional = true}
 ipython = {version = "*", optional = true}
 pyreadline3 = {version = "^3.4.1", markers = "sys_platform == 'win32'"}
-icecream = "*"
-sqlparse = "*"
 
 [tool.poetry.extras]
-celery = ["celery"]
 ipython = ["ipython"]
 
 [tool.poetry.scripts]
@@ -56,7 +51,7 @@ verbose = false
 
 [project]
 name = "pdbr"
-version = "0.8.6"
+version = "0.8.7"
 
 [tool.setuptools]
 py-modules = []

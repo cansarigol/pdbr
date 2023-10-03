@@ -4,7 +4,6 @@ import re
 from pathlib import Path
 from pdb import Pdb
 
-import sqlparse
 from rich import box, markup
 from rich._inspect import Inspect
 from rich.console import Console
@@ -300,21 +299,6 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             except BaseException:
                 pass
 
-        def do_icecream(self, arg):
-            """ic(ecream) expression
-            Icecream print.
-            """
-            try:
-                from icecream import ic
-
-                val = self._getval(arg)
-                ic.configureOutput(prefix="🍦 |> ")
-                self._print(ic.format(arg, val))
-            except BaseException:
-                pass
-
-        do_ic = do_icecream
-
         def do_syntax(self, arg):
             """syn(tax)[ val,lexer ]
             Display lexer. https://pygments.org/docs/lexers/
@@ -338,10 +322,15 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
             """sql
             Display value in sql format.
             """
-            val = sqlparse.format(
-                self._getval(arg), reindent=True, keyword_case="upper"
-            )
-            self._print(val)
+            try:
+                import sqlparse
+
+                val = sqlparse.format(
+                    self._getval(arg), reindent=True, keyword_case="upper"
+                )
+                self._print(val)
+            except ModuleNotFoundError as error:
+                raise type(error)("Install sqlparse to see sql format.") from error
 
         def displayhook(self, obj):
             if obj is not None:
