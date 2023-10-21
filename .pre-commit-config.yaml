@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -15,7 +15,7 @@ repos:
       - id: python-check-blanket-noqa
       - id: python-use-type-annotations
   - repo: https://github.com/jendrikseipp/vulture
-    rev: v2.9.1
+    rev: v2.10
     hooks:
       - id: vulture
   - repo: https://github.com/astral-sh/ruff-pre-commit
