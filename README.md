@@ -82,8 +82,8 @@ custom_theme = Theme({
     "danger": "bold red",
 })
 custom_style = Style(
-    color="magenta", 
-    bgcolor="yellow", 
+    color="magenta",
+    bgcolor="yellow",
     italic=True,
 )
 console = Console(theme=custom_theme, style=custom_style)
