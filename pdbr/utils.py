@@ -78,7 +78,9 @@ def read_config():
     return style, theme, history_file, ipython_history_file
 
 
-def debugger_cls(klass=None, context=None, is_celery=False, show_layouts=True):
+def debugger_cls(
+    klass=None, console=None, context=None, is_celery=False, show_layouts=True
+):
     if klass is None:
         try:
             from IPython.terminal.debugger import TerminalPdb
@@ -90,7 +92,11 @@ def debugger_cls(klass=None, context=None, is_celery=False, show_layouts=True):
             klass = Pdb
 
     RichPdb = rich_pdb_klass(
-        klass, context=context, is_celery=is_celery, show_layouts=show_layouts
+        klass,
+        console=console,
+        context=context,
+        is_celery=is_celery,
+        show_layouts=show_layouts,
     )
     style, theme, history_file, ipython_history_file = read_config()
     RichPdb._style = style
@@ -101,8 +107,8 @@ def debugger_cls(klass=None, context=None, is_celery=False, show_layouts=True):
     return RichPdb
 
 
-def _pdbr_cls(context=None, return_instance=True, show_layouts=True):
-    klass = debugger_cls(context=context, show_layouts=show_layouts)
+def _pdbr_cls(console=None, context=None, return_instance=True, show_layouts=True):
+    klass = debugger_cls(console=console, context=context, show_layouts=show_layouts)
     if return_instance:
         return klass()
     return klass

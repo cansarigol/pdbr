@@ -68,6 +68,28 @@ use_traceback = True
 theme = friendly
 ```
 
+Also custom `Console` object can be assigned to the `set_trace`.
+```python
+import pdbr
+
+from rich.console import Console
+from rich.style import Style
+from rich.theme import Theme
+
+custom_theme = Theme({
+    "info": "dim cyan",
+    "warning": "magenta",
+    "danger": "bold red",
+})
+custom_style = Style(
+    color="magenta", 
+    bgcolor="yellow", 
+    italic=True,
+)
+console = Console(theme=custom_theme, style=custom_style)
+
+pdbr.set_trace(console=console)
+```
 ### History
 **store_history** setting is used to keep and reload history, even the prompt is closed and opened again:
 ```

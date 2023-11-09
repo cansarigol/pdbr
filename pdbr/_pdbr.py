@@ -35,7 +35,9 @@ class AsciiStdout(io.TextIOWrapper):
     pass
 
 
-def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
+def rich_pdb_klass(
+    base, is_celery=False, console=None, context=None, show_layouts=True
+):
     class RichPdb(base):
         _style = None
         _theme = None
@@ -64,6 +66,8 @@ def rich_pdb_klass(base, is_celery=False, context=None, show_layouts=True):
                     "readrc": readrc,
                 }
             )
+            if console is not None:
+                self._console = console
             if context is not None:
                 if base == Pdb:
                     raise ValueError("Context can only be used with IPython")
