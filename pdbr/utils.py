@@ -51,7 +51,7 @@ def read_config():
     config.sections()
 
     setup_filename = "setup.cfg"
-    xdg_config_home = Path(os.getenv('XDG_CONFIG_HOME', Path.home() / ".config"))
+    xdg_config_home = Path(os.getenv("XDG_CONFIG_HOME", Path.home() / ".config"))
     global_config_path = xdg_config_home / "pdbr" / setup_filename
     cwd_config_path = Path.cwd() / setup_filename
     config_path = cwd_config_path.exists() and cwd_config_path or global_config_path
