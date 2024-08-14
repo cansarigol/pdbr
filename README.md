@@ -56,7 +56,7 @@ Get the local variables list as tree.
 ![](/images/image5.png)
 
 ## Config
-Config is specified in **setup.cfg** and can be local or global. Local config (current working directory) has precedence over global (default) one. Global config must be located in `$XDG_CONFIG_HOME/pdbr/` directory.
+Config is specified in **setup.cfg** and can be local or global. Local config (current working directory) has precedence over global (default) one. Global config must be located at `$XDG_CONFIG_HOME/pdbr/setup.cfg`.
 
 ### Style
 In order to use Rich's traceback, style, and theme:
@@ -97,6 +97,8 @@ pdbr.set_trace(console=console)
 ...
 store_history=.pdbr_history
 ```
+
+By default, history is stored globally in `~/.pdbr_history`.
 
 ## Celery
 In order to use **Celery** remote debugger with pdbr, use ```celery_set_trace``` as below sample. For more information see the [Celery user guide](https://docs.celeryproject.org/en/stable/userguide/debugging.html).
