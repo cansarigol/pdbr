@@ -1,6 +1,6 @@
-import os
 import atexit
 import configparser
+import os
 from pathlib import Path
 
 from pdbr._pdbr import rich_pdb_klass

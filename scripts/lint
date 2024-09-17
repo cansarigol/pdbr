@@ -2,5 +2,5 @@
 
 export SOURCE_FILES="pdbr tests noxfile.py"
 
-ruff $SOURCE_FILES --fix
+ruff check $SOURCE_FILES --fix
 black $SOURCE_FILES

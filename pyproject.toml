@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.8.8"
+version = "0.8.9"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -35,8 +35,8 @@ pdbr = 'pdbr.cli:shell'
 pdbr_telnet = 'pdbr.cli:telnet'
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.0.261"
-nox = "^2022.11.21"
+ruff = "^0.6.5"
+nox = "^2024.4.15"
 
 [build-system]
 requires = ["poetry>=1.0.0", "setuptools"]
@@ -51,12 +51,15 @@ verbose = false
 
 [project]
 name = "pdbr"
-version = "0.8.8"
+version = "0.8.9"
 
 [tool.setuptools]
 py-modules = []
 
 [tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -67,4 +70,3 @@ select = [
     "PIE", # flake8-pie
     "ERA", # eradicate
 ]
-line-length = 88
