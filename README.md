@@ -100,6 +100,15 @@ store_history=.pdbr_history
 
 By default, history is stored globally in `~/.pdbr_history`.
 
+### Context
+The **context** setting is used to specify the number of lines of source code context to show when displaying stacktrace information.
+```
+[pdbr]
+...
+context=10
+```
+This setting is only available when using `pdbr` with `IPython`.
+
 ## Celery
 In order to use **Celery** remote debugger with pdbr, use ```celery_set_trace``` as below sample. For more information see the [Celery user guide](https://docs.celeryproject.org/en/stable/userguide/debugging.html).
 

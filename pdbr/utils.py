@@ -46,6 +46,7 @@ def read_config():
     style = None
     theme = None
     store_history = ".pdbr_history"
+    context = None
 
     config = configparser.ConfigParser()
     config.sections()
@@ -73,11 +74,14 @@ def read_config():
         if "store_history" in config["pdbr"]:
             store_history = config["pdbr"]["store_history"]
 
+        if "context" in config["pdbr"]:
+            context = config["pdbr"]["context"]
+
     history_file = str(Path.home() / store_history)
     set_history_file(history_file)
     ipython_history_file = f"{history_file}_ipython"
 
-    return style, theme, history_file, ipython_history_file
+    return style, theme, history_file, ipython_history_file, context
 
 
 def debugger_cls(
@@ -93,6 +97,7 @@ def debugger_cls(
 
             klass = Pdb
 
+    style, theme, history_file, ipython_history_file, context = read_config()
     RichPdb = rich_pdb_klass(
         klass,
         console=console,
@@ -100,7 +105,6 @@ def debugger_cls(
         is_celery=is_celery,
         show_layouts=show_layouts,
     )
-    style, theme, history_file, ipython_history_file = read_config()
     RichPdb._style = style
     RichPdb._theme = theme
     RichPdb._history_file = history_file
