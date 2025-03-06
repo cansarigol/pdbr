@@ -369,6 +369,7 @@ def rich_pdb_klass(
             return reversed(stacks)
 
         def message(self, msg):
+            "this is used by the upstream PDB class"
             self._print(msg)
 
         def precmd(self, line):
@@ -429,7 +430,7 @@ def rich_pdb_klass(
                 **kwargs,
             )
 
-        def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> ", context=None):
+        def print_stack_entry(self, frame_lineno, prompt_prefix="\n-> "):
             def print_syntax(*args):
                 # Remove color format.
                 self._print(
@@ -446,7 +447,7 @@ def rich_pdb_klass(
             elif base == Pdb:
                 print_syntax(frame_lineno, prompt_prefix)
             else:
-                print_syntax(frame_lineno, "", context)
+                print_syntax(frame_lineno, "")
 
                 # vds: >>
                 frame, lineno = frame_lineno
