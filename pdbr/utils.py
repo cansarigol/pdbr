@@ -97,11 +97,11 @@ def debugger_cls(
 
             klass = Pdb
 
-    style, theme, history_file, ipython_history_file, context = read_config()
+    style, theme, history_file, ipython_history_file, config_context = read_config()
     RichPdb = rich_pdb_klass(
         klass,
         console=console,
-        context=context,
+        context=context if context is not None else config_context,
         is_celery=is_celery,
         show_layouts=show_layouts,
     )
