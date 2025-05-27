@@ -9,16 +9,16 @@ on:
 jobs:
   check:
     name: "Check"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install pre-commit
         run: |
-          pip install pre-commit --upgrade
+          pip install --upgrade pre-commit
       - name: Run check
         run: |
           pre-commit run --all-files
@@ -34,16 +34,16 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Python "${{ matrix.python-version }}"
-        uses: actions/setup-python@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
-          python-version: "${{ matrix.python-version }}"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install nox
         run: |
-          pip install nox --upgrade
-      - name: Run test
+          pip install --upgrade nox
+      - name: Run tests
         run: |
           nox --sessions test django_test
