@@ -380,6 +380,12 @@ def rich_pdb_klass(
 
             return super().precmd(line)
 
+        def cmdloop(self, intro=None):
+            try:
+                super().cmdloop(intro)
+            except (EOFError, KeyboardInterrupt):
+                return
+
         def onecmd(self, line: str) -> bool:
             """
             Invokes 'run_magic()' if the line starts with a '%'.
@@ -399,6 +405,11 @@ def rich_pdb_klass(
                     return False
                 return super().onecmd(line)
 
+            except EOFError:
+                return True
+            except KeyboardInterrupt:
+                self.error("KeyboardInterrupt")
+                return True
             except Exception as e:
                 self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
                 return False

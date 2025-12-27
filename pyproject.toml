@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.9.2"
+version = "0.9.3"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -19,6 +19,9 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 [tool.poetry.dependencies]
@@ -51,7 +54,7 @@ verbose = false
 
 [project]
 name = "pdbr"
-version = "0.9.2"
+version = "0.9.3"
 
 [tool.setuptools]
 py-modules = []
