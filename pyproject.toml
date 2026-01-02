@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.9.4"
+version = "0.9.5"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -54,7 +54,7 @@ verbose = false
 
 [project]
 name = "pdbr"
-version = "0.9.4"
+version = "0.9.5"
 
 [tool.setuptools]
 py-modules = []

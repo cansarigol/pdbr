@@ -373,53 +373,23 @@ def rich_pdb_klass(
             self._print(msg)
 
         def precmd(self, line):
+            # Python 3.13+: Ctrl-D comes as literal "EOF"
+            if line is None or line == "EOF":
+                return "continue"
+
             if line.endswith("??"):
                 line = "pinfo2 " + line[:-2]
             elif line.endswith("?"):
                 line = "pinfo " + line[:-1]
+            elif line.startswith("%"):
+                if line.startswith("%%"):
+                    self.error(
+                        "Cell magics (multiline) are not yet supported. "
+                        "Use a single '%' instead."
+                    )
+                return self.run_magic(line[1:])
 
             return super().precmd(line)
-
-        def cmdloop(self, intro=None):
-            try:
-                super().cmdloop(intro)
-            except (EOFError, KeyboardInterrupt):
-                return
-
-        def onecmd(self, line: str) -> bool:
-            """
-            Invokes 'run_magic()' if the line starts with a '%'.
-            The loop stops if this function returns True.
-            """
-            try:
-                # Python 3.13+/3.14: Ctrl-D becomes literal "EOF"
-                if line is None or line == "EOF":
-                    return True
-
-                line = line.strip()
-                if not line:
-                    return False
-
-                if line.startswith("%"):
-                    if line.startswith("%%"):
-                        self.error(
-                            "Cell magics (multiline) are not yet supported. "
-                            "Use a single '%' instead."
-                        )
-                        return False
-                    self.run_magic(line[1:])
-                    return False
-
-                return super().onecmd(line)
-
-            except EOFError:
-                return True
-            except KeyboardInterrupt:
-                self.error("KeyboardInterrupt")
-                return False
-            except Exception as e:
-                self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
-                return False
 
         def _print(self, val, prefix=None, style=None, print_layout=True):
             if val == "--Return--":

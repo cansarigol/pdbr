@@ -49,8 +49,8 @@ def import_tmp_file(rpdb, tmp_path: Path, file_content=TMP_FILE_CONTENT) -> Path
     tmp_file = tmp_path / "foo.py"
     tmp_file.write_text(file_content)
 
-    rpdb.onecmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
-    rpdb.onecmd(f"from {tmp_file.stem} import foo")
+    rpdb.precmd(f'import sys; sys.path.append("{tmp_file.parent.absolute()}")')
+    rpdb.precmd(f"from {tmp_file.stem} import foo")
     return tmp_file
 
 
@@ -122,7 +122,7 @@ class TestPdbrChildProcess:
 @pytest.mark.skipif(sys.platform.startswith("win"), reason="pexpect")
 class TestPdbrMagic:
     def test_onecmd_time_line_magic(self, capsys, RichIPdb):
-        RichIPdb().onecmd("%time pass")
+        RichIPdb().precmd("%time pass")
         captured = capsys.readouterr()
         output = captured.out
         assert re.search(
@@ -134,7 +134,7 @@ class TestPdbrMagic:
         )
 
     def test_onecmd_unsupported_cell_magic(self, capsys, RichIPdb):
-        RichIPdb().onecmd("%%time pass")
+        RichIPdb().precmd("%%time pass")
         captured = capsys.readouterr()
         output = captured.out
         error = (
@@ -142,7 +142,7 @@ class TestPdbrMagic:
         )
         assert output == "*** " + error + "\n"
         cmd = "%%time"
-        stop = RichIPdb().onecmd(cmd)
+        stop = RichIPdb().precmd(cmd)
         captured_output = capsys.readouterr().out
         assert not stop
         RichIPdb().error(error)
@@ -150,7 +150,7 @@ class TestPdbrMagic:
         assert cell_magics_error == captured_output
 
     def test_onecmd_lsmagic_line_magic(self, capsys, RichIPdb):
-        RichIPdb().onecmd("%lsmagic")
+        RichIPdb().precmd("%lsmagic")
         captured = capsys.readouterr()
         output = captured.out
 
@@ -162,12 +162,12 @@ class TestPdbrMagic:
 
     def test_no_zombie_lastcmd(self, capsys, RichIPdb):
         rpdb = RichIPdb(stdout=sys.stdout)
-        rpdb.onecmd("print('SHOULD_NOT_BE_IN_%pwd_OUTPUT')")
+        rpdb.precmd("print('SHOULD_NOT_BE_IN_%pwd_OUTPUT')")
         captured = capsys.readouterr()
         assert captured.out.endswith(
             "SHOULD_NOT_BE_IN_%pwd_OUTPUT\n"
         )  # Starts with colors and prompt
-        rpdb.onecmd("%pwd")
+        rpdb.precmd("%pwd")
         captured = capsys.readouterr()
         assert captured.out.endswith(Path.cwd().absolute().as_posix() + "\n")
         assert "SHOULD_NOT_BE_IN_%pwd_OUTPUT" not in captured.out
@@ -188,13 +188,13 @@ class TestPdbrMagic:
         do_pdef_foo_output = capsys.readouterr().out
         untagged = untag(do_pdef_foo_output).strip()
         assert untagged.endswith("foo(arg)"), untagged
-        rpdb.onecmd("%pdef foo")
+        rpdb.precmd("%pdef foo")
         magic_pdef_foo_output = capsys.readouterr().out
         untagged = untag(magic_pdef_foo_output).strip()
         assert untagged.endswith("foo(arg)"), untagged
 
         # pdoc
-        rpdb.onecmd("%pdoc foo")
+        rpdb.precmd("%pdoc foo")
         magic_pdef_foo_output = capsys.readouterr().out
         untagged = untag(magic_pdef_foo_output).strip()
         expected_docstring = dedent(
@@ -206,14 +206,14 @@ class TestPdbrMagic:
         assert untagged == expected_docstring, untagged
 
         # pfile
-        rpdb.onecmd("%pfile foo")
+        rpdb.precmd("%pfile foo")
         magic_pfile_foo_output = capsys.readouterr().out
         untagged = untag(magic_pfile_foo_output).strip()
         tmp_file_content = Path(tmp_file).read_text().strip()
         assert untagged == tmp_file_content
 
         # pinfo
-        rpdb.onecmd("%pinfo foo")
+        rpdb.precmd("%pinfo foo")
         magic_pinfo_foo_output = capsys.readouterr().out
         untagged = untag(magic_pinfo_foo_output).strip()
         expected_pinfo = dedent(
@@ -225,7 +225,7 @@ class TestPdbrMagic:
         assert untagged == expected_pinfo, untagged
 
         # pinfo2
-        rpdb.onecmd("%pinfo2 foo")
+        rpdb.precmd("%pinfo2 foo")
         magic_pinfo2_foo_output = capsys.readouterr().out
         untagged = untag(magic_pinfo2_foo_output).strip()
         expected_pinfo2 = re.compile(
@@ -241,7 +241,7 @@ class TestPdbrMagic:
         assert expected_pinfo2.fullmatch(untagged), untagged
 
         # psource
-        rpdb.onecmd("%psource foo")
+        rpdb.precmd("%psource foo")
         magic_psource_foo_output = capsys.readouterr().out
         untagged = untag(magic_psource_foo_output).strip()
         expected_psource = 'def foo(arg):\n    """Foo docstring"""\n    pass'
@@ -253,7 +253,7 @@ class TestPdbrMagic:
         rpdb = RichIPdb(stdout=sys.stdout)
         tmp_file = import_tmp_file(rpdb, tmp_path)
         # pinfo
-        rpdb.onecmd(rpdb.precmd("foo?"))
+        rpdb.precmd(rpdb.precmd("foo?"))
         magic_foo_qmark_output = capsys.readouterr().out
         untagged = untag(magic_foo_qmark_output).strip()
 
@@ -273,29 +273,29 @@ class TestPdbrMagic:
         assert expected_pinfo.fullmatch(untagged), f"untagged = {untagged!r}"
 
         # pinfo2
-        rpdb.onecmd(rpdb.precmd("foo??"))
+        rpdb.precmd(rpdb.precmd("foo??"))
         magic_foo_qmark2_output = capsys.readouterr().out
-        rpdb.onecmd(rpdb.precmd("%pinfo2 foo"))
+        rpdb.precmd(rpdb.precmd("%pinfo2 foo"))
         magic_pinfo2_foo_output = capsys.readouterr().out
         assert magic_pinfo2_foo_output == magic_foo_qmark2_output
 
     def test_filesystem_magics(self, capsys, RichIPdb):
         cwd = Path.cwd().absolute().as_posix()
         rpdb = RichIPdb(stdout=sys.stdout)
-        rpdb.onecmd("%pwd")
+        rpdb.precmd("%pwd")
         pwd_output = capsys.readouterr().out.strip()
         assert pwd_output == cwd
-        rpdb.onecmd("import os; os.getcwd()")
+        rpdb.precmd("import os; os.getcwd()")
         pwd_output = unquote(capsys.readouterr().out.strip())
         assert pwd_output == cwd
 
         new_dir = str(Path.cwd().absolute().parent)
-        rpdb.onecmd(f"%cd {new_dir}")
+        rpdb.precmd(f"%cd {new_dir}")
         cd_output = untag(capsys.readouterr().out.strip())
         assert cd_output.endswith(new_dir)
-        rpdb.onecmd("%pwd")
+        rpdb.precmd("%pwd")
         pwd_output = capsys.readouterr().out.strip()
         assert pwd_output == new_dir
-        rpdb.onecmd("import os; os.getcwd()")
+        rpdb.precmd("import os; os.getcwd()")
         pwd_output = unquote(capsys.readouterr().out.strip())
         assert pwd_output == new_dir

@@ -60,7 +60,7 @@ def test_print_array(capsys, RichPdb):
 def test_onecmd(capsys, RichPdb):
     rpdb = RichPdb()
     cmd = 'print("msg")'
-    stop = rpdb.onecmd(cmd)
+    stop = rpdb.precmd(cmd)
     captured = capsys.readouterr()
     assert not stop
     assert captured.out == "msg\n"
