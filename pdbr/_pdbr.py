@@ -389,11 +389,17 @@ def rich_pdb_klass(
         def onecmd(self, line: str) -> bool:
             """
             Invokes 'run_magic()' if the line starts with a '%'.
-            The loop stops of this function returns True.
-            (unless an overridden 'postcmd()' behaves differently)
+            The loop stops if this function returns True.
             """
             try:
+                # Python 3.13+/3.14: Ctrl-D becomes literal "EOF"
+                if line is None or line == "EOF":
+                    return True
+
                 line = line.strip()
+                if not line:
+                    return False
+
                 if line.startswith("%"):
                     if line.startswith("%%"):
                         self.error(
@@ -403,13 +409,14 @@ def rich_pdb_klass(
                         return False
                     self.run_magic(line[1:])
                     return False
+
                 return super().onecmd(line)
 
             except EOFError:
                 return True
             except KeyboardInterrupt:
                 self.error("KeyboardInterrupt")
-                return True
+                return False
             except Exception as e:
                 self.error(f"{type(e).__qualname__} in onecmd({line!r}): {e}")
                 return False
