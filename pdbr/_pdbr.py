@@ -443,6 +443,13 @@ def rich_pdb_klass(
                 self.shell.hooks.synchronize_with_editor(filename, lineno, 0)
                 # vds: <<
 
+        def print_stack_trace(self, count):
+            """
+            Use pdb stack trace due to hide hidden frames
+            IPython is not using traceback count (for only python3.14),
+            """
+            Pdb.print_stack_trace(self, count=count)
+
         def run_magic(self, line) -> str:
             """
             Parses the line and runs the appropriate magic function.
