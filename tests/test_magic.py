@@ -197,12 +197,10 @@ class TestPdbrMagic:
         rpdb.precmd("%pdoc foo")
         magic_pdef_foo_output = capsys.readouterr().out
         untagged = untag(magic_pdef_foo_output).strip()
-        expected_docstring = dedent(
-            """Class docstring:
+        expected_docstring = dedent("""Class docstring:
             Foo docstring
         Call docstring:
-            Call self as a function."""
-        )
+            Call self as a function.""")
         assert untagged == expected_docstring, untagged
 
         # pfile
@@ -216,28 +214,21 @@ class TestPdbrMagic:
         rpdb.precmd("%pinfo foo")
         magic_pinfo_foo_output = capsys.readouterr().out
         untagged = untag(magic_pinfo_foo_output).strip()
-        expected_pinfo = dedent(
-            f"""Signature: foo(arg)
+        expected_pinfo = dedent(f"""Signature: foo(arg)
         Docstring: Foo docstring
         File:      {tmp_file.absolute()}
-        Type:      function"""
-        )
+        Type:      function""")
         assert untagged == expected_pinfo, untagged
 
         # pinfo2
         rpdb.precmd("%pinfo2 foo")
         magic_pinfo2_foo_output = capsys.readouterr().out
         untagged = untag(magic_pinfo2_foo_output).strip()
-        expected_pinfo2 = re.compile(
-            dedent(
-                rf"""Signature: foo\(arg\)
+        expected_pinfo2 = re.compile(dedent(rf"""Signature: foo\(arg\)
         Source:\s*
         %s
         File:      {tmp_file.absolute()}
-        Type:      function"""
-            )
-            % re.escape(tmp_file_content)
-        )
+        Type:      function""") % re.escape(tmp_file_content))
         assert expected_pinfo2.fullmatch(untagged), untagged
 
         # psource
@@ -262,14 +253,10 @@ class TestPdbrMagic:
             if sys.platform == "darwin"
             else f"/tmp/.*/{tmp_file.name}"
         )
-        expected_pinfo = re.compile(
-            dedent(
-                rf""".*Signature: foo\(arg\)
+        expected_pinfo = re.compile(dedent(rf""".*Signature: foo\(arg\)
         Docstring: Foo docstring
         File:      {expected_pinfo_path}
-        Type:      function"""
-            )
-        )
+        Type:      function"""))
         assert expected_pinfo.fullmatch(untagged), f"untagged = {untagged!r}"
 
         # pinfo2
