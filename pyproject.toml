@@ -41,7 +41,7 @@ pdbr_telnet = 'pdbr.cli:telnet'
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.5"
-pytest = "^8.0"
+pytest = ">=8,<10"
 pytest-cov = "^5.0"
 pytest-mock = "^3.14"
 pre-commit = "^3.7"
