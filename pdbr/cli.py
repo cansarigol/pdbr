@@ -1,5 +1,4 @@
 import sys
-from telnetlib import Telnet
 
 from rich.file_proxy import FileProxy
 
@@ -26,6 +25,19 @@ def telnet():
     if len(sys.argv) < 3:
         pdb_cls.error("Usage : pdbr_telnet hostname port")
         sys.exit()
+
+    # Lazy import: telnetlib was removed from stdlib in Python 3.13 (PEP 594).
+    # The `telnetlib3` package ships a verbatim shim so `import telnetlib`
+    # keeps working once installed — see `pip install pdbr[telnet]`.
+    try:
+        from telnetlib import Telnet
+    except ModuleNotFoundError:
+        pdb_cls.error(
+            "The `telnetlib` module was removed in Python 3.13. "
+            r"Install the compatibility shim with `pip install pdbr\[telnet]` "
+            "(or `pip install telnetlib3`) and re-run `pdbr_telnet`."
+        )
+        sys.exit(1)
 
     class MyTelnet(Telnet):
         def fill_rawq(self):

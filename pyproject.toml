@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pdbr"
-version = "0.9.7"
+version = "0.9.8"
 description = "Pdb with Rich library."
 authors = ["Can Sarigol <ertugrulsarigol@gmail.com>"]
 packages = [
@@ -15,8 +15,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -25,13 +23,17 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7.9"
+python = "^3.10"
 rich = "*"
 ipython = {version = "*", optional = true}
+celery = {version = "*", optional = true}
+telnetlib3 = {version = "^4.0", optional = true, python = ">=3.13"}
 pyreadline3 = {version = "^3.4.1", markers = "sys_platform == 'win32'"}
 
 [tool.poetry.extras]
 ipython = ["ipython"]
+celery = ["celery"]
+telnet = ["telnetlib3"]
 
 [tool.poetry.scripts]
 pdbr = 'pdbr.cli:shell'
@@ -39,7 +41,11 @@ pdbr_telnet = 'pdbr.cli:telnet'
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.5"
-nox = "^2024.4.15"
+pytest = "^8.0"
+pytest-cov = "^5.0"
+pytest-mock = "^3.14"
+pre-commit = "^3.7"
+vulture = "^2.14"
 
 [build-system]
 requires = ["poetry-core>=1.2.0"]
@@ -51,10 +57,13 @@ min_confidence = 80
 paths = ["pdbr", "tests"]
 sort_by_size = true
 verbose = false
+# pytest fixtures are resolved by name-matching; body doesn't reference them.
+# `cycle` is required by IPython's `_repr_pretty_` protocol.
+ignore_names = ["no_frameworks", "cycle"]
 
 [project]
 name = "pdbr"
-version = "0.9.7"
+version = "0.9.8"
 
 [tool.setuptools]
 py-modules = []

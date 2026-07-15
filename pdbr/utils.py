@@ -1,5 +1,6 @@
 import atexit
 import configparser
+import logging
 import os
 from pathlib import Path
 
@@ -36,10 +37,10 @@ def set_history_file(history_file):
     atexit.register(readline.write_history_file, history_file)
 
 
-def set_traceback(theme):
+def set_traceback(theme, show_locals=False):
     from rich.traceback import install
 
-    install(theme=theme)
+    install(theme=theme, show_locals=show_locals)
 
 
 def read_config():
@@ -65,11 +66,10 @@ def read_config():
         if "theme" in config["pdbr"]:
             theme = config["pdbr"]["theme"]
 
-        if "use_traceback" in config["pdbr"]:
-            if config["pdbr"]["use_traceback"].lower() == "true":
-                set_traceback(theme)
-        else:
-            set_traceback(theme)
+        use_traceback = config["pdbr"].getboolean("use_traceback", fallback=True)
+        show_locals = config["pdbr"].getboolean("traceback_show_locals", fallback=False)
+        if use_traceback:
+            set_traceback(theme, show_locals=show_locals)
 
         if "store_history" in config["pdbr"]:
             store_history = config["pdbr"]["store_history"]
@@ -77,11 +77,30 @@ def read_config():
         if "context" in config["pdbr"]:
             context = config["pdbr"]["context"]
 
+    _apply_log_capture_config(config)
+
     history_file = str(Path.home() / store_history)
     set_history_file(history_file)
     ipython_history_file = f"{history_file}_ipython"
 
     return style, theme, history_file, ipython_history_file, context
+
+
+def _apply_log_capture_config(config):
+    from pdbr.logging import install_log_capture
+
+    section = config["pdbr.log"] if "pdbr.log" in config else None
+
+    if section is None:
+        install_log_capture()
+        return
+
+    enabled = section.getboolean("enabled", True)
+    buffer_size = section.getint("buffer_size", 500)
+    level_name = section.get("level", "WARNING").upper()
+    level = getattr(logging, level_name, logging.WARNING)
+
+    install_log_capture(buffer_size=buffer_size, level=level, enabled=enabled)
 
 
 def debugger_cls(

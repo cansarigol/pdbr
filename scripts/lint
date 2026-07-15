@@ -1,6 +1,0 @@
-#!/bin/sh -e
-
-export SOURCE_FILES="pdbr tests noxfile.py"
-
-ruff check $SOURCE_FILES --fix
-black $SOURCE_FILES

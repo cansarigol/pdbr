@@ -336,6 +336,72 @@ def rich_pdb_klass(
             except ModuleNotFoundError as error:
                 raise type(error)("Install sqlparse to see sql format.") from error
 
+        def do_log(self, arg):
+            """log [N] [--level L] [--contains T] [--logger S] | log clear
+            Show recently captured log records as a Rich table.
+            """
+            from pdbr.logging import CLEAR_SENTINEL, query_logs
+
+            try:
+                result = query_logs(arg)
+            except ValueError as err:
+                self.error(str(err))
+                return
+
+            if result is CLEAR_SENTINEL:
+                return
+
+            records, renderable = result
+            self._expose_last("_last_log", records)
+            self._print(renderable, print_layout=False)
+
+        def _expose_last(self, name, value):
+            shell = getattr(self, "shell", None)
+            user_ns = getattr(shell, "user_ns", None)
+            if user_ns is not None:
+                user_ns[name] = value
+
+        def do_whereami(self, arg):
+            """whereami
+            Snapshot of runtime, process, frame, and framework context.
+            """
+            from pdbr.whereami import collect_context, render_whereami
+
+            context = collect_context(self.curframe)
+            self._expose_last("_last_whereami", context)
+            self._print(render_whereami(context), print_layout=False)
+
+        def do_diff(self, arg):
+            """diff <expr1> <expr2>
+            Semantic diff of two expressions evaluated in the current frame.
+            """
+            from pdbr.diff_command import (
+                compute_diff,
+                render_diff,
+                split_two_expressions,
+            )
+
+            parsed = split_two_expressions(arg or "")
+            if parsed is None:
+                self.error("Usage: diff <expr1> <expr2>")
+                return
+            expr_a, expr_b = parsed
+
+            try:
+                left = self._getval(expr_a)
+                right = self._getval(expr_b)
+            except Exception:
+                # `_getval` already prints "*** NameError: ..." on failure,
+                # so we don't need to echo it again from pdbr.
+                return
+
+            changes = compute_diff(left, right)
+            self._expose_last("_last_diff", changes)
+            self._print(
+                render_diff(changes, before_label=expr_a, after_label=expr_b),
+                print_layout=False,
+            )
+
         def displayhook(self, obj):
             if obj is not None:
                 self._print(obj if isinstance(obj, (dict, list)) else repr(obj))
@@ -387,7 +453,14 @@ def rich_pdb_klass(
                         "Cell magics (multiline) are not yet supported. "
                         "Use a single '%' instead."
                     )
-                return self.run_magic(line[1:])
+                    self.lastcmd = ""
+                    return ""
+                dispatched = self.run_magic(line[1:])
+                # Cmd.Cmd.emptyline() replays self.lastcmd; clear it so an
+                # empty line following a %magic doesn't fire the underlying
+                # do_* twice.
+                self.lastcmd = ""
+                return dispatched
 
             return super().precmd(line)
 

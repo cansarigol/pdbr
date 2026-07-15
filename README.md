@@ -2,9 +2,38 @@
 
 [![PyPI version](https://badge.fury.io/py/pdbr.svg)](https://pypi.org/project/pdbr/) [![Python Version](https://img.shields.io/pypi/pyversions/pdbr.svg)](https://pypi.org/project/pdbr/) [![](https://github.com/cansarigol/pdbr/workflows/Test/badge.svg)](https://github.com/cansarigol/pdbr/actions?query=workflow%3ATest) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/cansarigol/pdbr/master.svg)](https://results.pre-commit.ci/latest/github/cansarigol/pdbr/master)
 
-
 `pdbr` is intended to make the PDB results more colorful. it uses [Rich](https://github.com/willmcgugan/rich) library to carry out that.
 
+## Table of contents
+
+- [Installing](#installing)
+- [Breakpoint](#breakpoint)
+  - [What `import pdbr` does at load time](#what-import-pdbr-does-at-load-time)
+- [New commands](#new-commands)
+  - [inspect / inspectall / ia](#inspect--inspectall--ia)
+  - [search / src](#search--src)
+  - [sql](#sql)
+  - [syntax / syn](#syntax)
+  - [vars / v](#vars)
+  - [varstree / vt](#varstree--vt)
+  - [log](#log)
+  - [whereami](#whereami)
+  - [diff](#diff)
+- [Config](#config)
+  - [Style](#style)
+  - [History](#history)
+  - [Context](#context)
+- [Celery](#celery)
+  - [Telnet](#telnet)
+- [IPython](#ipython)
+- [pytest](#pytest)
+- [sys.excepthook](#sysexcepthook)
+- [Context Decorator](#context-decorator)
+- [Django DiscoverRunner](#django-discoverrunner)
+- [Middlewares](#middlewares)
+- [Shell](#shell)
+- [Vscode user snippet](#vscode-user-snippet)
+- [Samples](#samples)
 
 ## Installing
 
@@ -13,7 +42,6 @@ Install with `pip` or your favorite PyPi package manager.
 ```
 pip install pdbr
 ```
-
 
 ## Breakpoint
 
@@ -31,29 +59,210 @@ or just import pdbr
 import pdbr
 ```
 
+### What `import pdbr` does at load time
+
+Importing `pdbr` is not free — it walks `setup.cfg` (local cwd, then
+`$XDG_CONFIG_HOME/pdbr/setup.cfg`) and performs three side effects:
+
+1. Sets `PYTHONBREAKPOINT` to `pdbr.set_trace` so plain `breakpoint()`
+   drops into pdbr.
+2. Installs Rich's traceback handler globally (`sys.excepthook`) unless
+   `[pdbr] use_traceback = False`.
+3. Attaches a `RingHandler` to the **root logger** to feed the `log`
+   command's buffer. Its level defaults to `WARNING`, chosen so that
+   `import pdbr` does not raise root's effective level and change what
+   every other handler on the tree sees. If you set `[pdbr.log] level`
+   to `INFO` or `DEBUG` to capture more, be aware that root gets lifted
+   to that level too, so all handlers on root (console, Sentry,
+   CloudWatch, etc.) will start seeing those records as well.
+
+To opt out of the log ring buffer entirely, set `[pdbr.log] enabled =
+False` in your `setup.cfg`.
+
 ## New commands
 ### (i)nspect / inspectall | ia
-[rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)
+[rich.inspect](https://rich.readthedocs.io/en/latest/introduction.html?s=03#rich-inspector)-powered
+introspection of any expression: attributes, method signatures and docstrings in one panel.
+`inspectall` / `ia` widens the output to include private and dunder members.
+
+![inspect](images/inspect.svg)
+
 ### search | src
-Search a phrase in the current frame.
-In order to repeat the last one, type **/** character as arg.
+Search a phrase in the current frame. `pdbr` jumps to the next matching line and repositions
+the source view. In order to repeat the last one, type **/** character as arg.
+
+![search](images/search.svg)
+
 ### sql
 Display value in sql format. Don't forget to install [sqlparse](https://github.com/andialbrecht/sqlparse) package.
-![](/images/image13.png)
 
 It can be used for Django model queries as follows.
-```
->>> sql str(Users.objects.all().query)
-```
-![](/images/image14.png)
+
+![sql](images/sql.svg)
+
 ### (syn)tax
-[ val,lexer ] Display [lexer](https://pygments.org/docs/lexers/).
+`syn <val>, <lexer>` — evaluates both in the current frame and pipes the value
+through the specified [Pygments lexer](https://pygments.org/docs/lexers/) for
+syntax-highlighted output (JSON payloads, HTML templates, YAML, etc.).
+
+![syntax](images/syntax.svg)
+
 ### (v)ars
 Get the local variables list as table.
 ### varstree | vt
 Get the local variables list as tree.
 
-![](/images/image5.png)
+![varstree](images/vt.svg)
+
+### log
+Show recently captured log records as a Rich table.
+
+![log](images/log.svg)
+
+`pdbr` auto-installs a stdlib `logging` handler that captures every log
+record into a bounded ring buffer. At a breakpoint, `log` renders them so
+you can inspect what happened right before the debugger paused. Because
+`structlog` (with the stdlib bridge) and any library that logs via stdlib
+already flow through this handler, they are captured for free — event
+dict fields land in the `Extra` column.
+
+Usage:
+```
+(Pdbr) log                     # last 20
+(Pdbr) log 50
+(Pdbr) log --level warning
+(Pdbr) log --contains timeout
+(Pdbr) log --logger celery
+(Pdbr) log clear
+```
+
+Configuration (all keys optional):
+```
+[pdbr.log]
+enabled = True
+buffer_size = 500
+level = DEBUG
+```
+
+`enabled = False` disables the handler completely. `install_log_capture`,
+`uninstall_log_capture` and `get_log_buffer` are also exposed as top-level
+`pdbr` API for manual control.
+
+#### IPython integration
+
+When `pdbr` is imported inside an IPython session, `%log` is registered as
+a line magic so it works outside a breakpoint too — e.g. a Django shell or a
+Jupyter cell:
+
+```
+In [1]: import pdbr
+In [2]: import my_app; my_app.do_stuff()
+In [3]: %log --level warning
+```
+
+Both `%log` at the IPython prompt and `log` at the `(Pdbr)` prompt store the
+filtered records under `_last_log` in the IPython namespace, so you can dig
+in further:
+
+```
+In [4]: _last_log[-1].extra
+Out[4]: {'task_id': 'abc123', 'retries': 2}
+```
+
+For manual bootstrapping (e.g. when `pdbr` is imported before the IPython
+shell starts), call `pdbr.register_pdbr_ipython_magics()` explicitly, or
+use `%load_ext pdbr`.
+
+### whereami
+One-shot snapshot of the runtime, process, frame, and any auto-detected
+framework context. Useful when you drop into a breakpoint and want to
+answer "where am I, in which env, under which request/task, with what
+observability context?" without hand-crafting `print` statements.
+
+![whereami](images/whereami.svg)
+
+```
+(Pdbr) whereami
+```
+
+Always-on sections:
+
+- **Runtime** — Python version, executable, active venv, cwd.
+- **Process** — pid and truncated `sys.argv`.
+- **Frame** — file, line, function/method of the current frame.
+
+Auto-detected sections (hidden when the framework is not imported or is
+inactive):
+
+- **Django** — `DJANGO_SETTINGS_MODULE`, `settings.DEBUG`, current DB
+  alias, `in_atomic_block`, plus the closest `request` in the call stack
+  (method/path/user).
+- **Celery** — current task name and id (when called from within a task).
+- **OpenTelemetry** — active `trace_id` / `span_id` (hex).
+- **Structlog context** — bound `contextvars` (user_id, tenant, etc.).
+
+Each optional section fails independently, so a broken integration never
+prevents the others from rendering.
+
+#### IPython integration
+
+`%whereami` is registered as a line magic in the same way as `%log`:
+
+```
+In [1]: import pdbr
+In [2]: %whereami
+```
+
+The last snapshot is stored under `_last_whereami` in the IPython
+namespace as a plain dict, so it is easy to forward to Sentry, dump to
+JSON, or diff between two calls:
+
+```
+In [3]: _last_whereami["django"]["request"]
+Out[3]: {'method': 'POST', 'path': '/invoices/', 'user': 'alice@…'}
+```
+
+`collect_context()` and `render_whereami()` are also exposed as top-level
+`pdbr` API for programmatic use.
+
+### diff
+Semantic diff of two expressions, rendered as a Rich table. Fills the gap
+between `pprint(a); pprint(b) + eyeball` and pulling in `deepdiff` for
+one-off comparisons at a breakpoint.
+
+![diff](images/diff.svg)
+
+```
+(Pdbr) diff invoice_before invoice_after
+(Pdbr) diff request.headers dict(request.META)
+(Pdbr) diff foo(1, 2) bar[0]      # parens / brackets are respected
+```
+
+Normalization is opt-in and framework-aware:
+
+- `dict`, `list`/`tuple`, `set`, and primitives → compared structurally
+- `dataclass` / `typing.NamedTuple` → field-level
+- Django `Model` → per-field via `_meta.fields`; ForeignKey fields report
+  the raw `_id` value to avoid lazy queryset explosions
+- Pydantic v1 / v2 → `.dict()` / `.model_dump()`
+- `attrs` → `attr.asdict(recurse=False)` so the walker keeps type info
+- Any other object → `vars(obj)` fallback
+- Cyclic references and >8-level depth are guarded
+
+Type changes are called out separately from value changes (e.g. `'EUR'
+<str>` → `Currency.EUR <Currency>`), so accidental serialization changes
+don't hide behind matching reprs.
+
+#### IPython integration
+
+```
+In [1]: %diff invoice_before invoice_after
+In [2]: _last_diff             # the list of DiffEntry namedtuples
+```
+
+`compute_diff()` and `render_diff()` are also exposed as top-level `pdbr`
+API — handy for logging structural diffs to Sentry or asserting against
+them in tests.
 
 ## Config
 Config is specified in **setup.cfg** and can be local or global. Local config (current working directory) has precedence over global (default) one. Global config must be located at `$XDG_CONFIG_HOME/pdbr/setup.cfg`.
@@ -65,8 +274,20 @@ In order to use Rich's traceback, style, and theme:
 [pdbr]
 style = yellow
 use_traceback = True
+traceback_show_locals = False
 theme = friendly
 ```
+
+`use_traceback` defaults to `True` — when the `[pdbr]` section is present,
+Rich's traceback is installed unless you set `use_traceback = False`. Set
+`traceback_show_locals = True` to dump every frame's local variables
+alongside the traceback. This is a huge time-saver during development
+(most bugs become obvious the moment you see the locals at the crash
+site), but should stay `False` in any environment where the traceback
+can leak to logs — `show_locals` prints tokens, PII, and secrets that
+happen to be in scope.
+
+![traceback](images/traceback.svg)
 
 Also custom `Console` object can be assigned to the `set_trace`.
 ```python
@@ -127,7 +348,18 @@ def add(x, y):
 ```
 #### Telnet
 Instead of using `telnet` or `nc`, in terms of using pdbr style, `pdbr_telnet` command can be used.
-![](/images/image6.png)
+
+```
+$ pdbr_telnet localhost 6899
+Connected to Celery worker.
+(Pdbr) w
+> /worker/tasks.py(87)send_invoice_email()
+(Pdbr) p invoice.amount
+Decimal('1500.00')
+(Pdbr) inspect invoice
+... rich panel of attributes and methods ...
+(Pdbr) c
+```
 
 Also in order to activate history and be able to use arrow keys, install and use [rlwrap](https://github.com/hanslub42/rlwrap) package.
 
@@ -163,6 +395,8 @@ addopts: --pdbcls=pdbr:RichPdb
 ## sys.excepthook
 The `sys.excepthook` is a Python system hook that provides a way to customize the behavior when an unhandled exception occurs. Since `pdbr` use  automatic traceback handler feature of `rich`, formatting exception print is not necessary if `pdbr` module is already imported.
 
+![post_mortem](images/post_mortem.svg)
+
 In order to use post-mortem or perform other debugging features of `pdbr`,  override `sys.excepthook` with a function that will act as your custom excepthook:
 ```python
 import sys
@@ -192,7 +426,6 @@ def bar():
     with pdbr_context():
         ...
 
-
 @apdbr_context()
 async def foo():
     ...
@@ -202,14 +435,14 @@ async def bar():
         ...
 ```
 
-![](/images/image12.png)
 ## Django DiscoverRunner
 To being activated the pdb in Django test, change `TEST_RUNNER` like below. Unlike Django (since you are not allowed to use for smaller versions than 3), pdbr runner can be used for version 1.8 and subsequent versions.
 
 ```
 TEST_RUNNER = "pdbr.runner.PdbrDiscoverRunner"
 ```
-![](/images/image10.png)
+
+Any test failure drops the runner into the same post-mortem experience shown above.
 ## Middlewares
 ### Starlette
 ```python
@@ -219,7 +452,6 @@ from pdbr.middlewares.starlette import PdbrMiddleware
 app = FastAPI()
 
 app.add_middleware(PdbrMiddleware, debug=True)
-
 
 @app.get("/")
 async def main():
@@ -235,11 +467,30 @@ MIDDLEWARE = (
     "pdbr.middlewares.django.PdbrMiddleware",
 )
 ```
-![](/images/image11.png)
+
+An unhandled exception during a request hands control to the same post-mortem prompt as `pdbr_context`.
 ## Shell
 Running `pdbr` command in terminal starts an `IPython` terminal app instance. Unlike default `TerminalInteractiveShell`, the new shell uses pdbr as debugger class instead of `ipdb`.
+
 #### %debug magic sample
-![](/images/image9.png)
+After an exception in the IPython shell, `%debug` drops you into pdbr at the failing frame — same as `pdbr.pm()` but reachable directly from the shell:
+
+```
+In [1]: run my_script.py
+---------------------------------------------------------------------------
+ZeroDivisionError                         Traceback (most recent call last)
+...
+In [2]: %debug
+> /myapp/services.py(23)calculate()
+     22     total = sum(item.amount for item in items)
+---> 23     return total / active_count
+     24
+(Pdbr) p active_count
+0
+(Pdbr) up
+(Pdbr) whereami
+... runtime + process + frame + Django context ...
+```
 ### As a Script
 If `pdbr` command is used with an argument, it is invoked as a script and [debugger-commands](https://docs.python.org/3/library/pdb.html#debugger-commands) can be used with it.
 ```python
@@ -259,7 +510,8 @@ pdbr -c 'b 5' my_test.py
 ```
 ### Terminal
 #### Django shell sample
-![](/images/image7.png)
+
+![django-shell](images/django_shell.svg)
 
 ## Vscode user snippet
 
@@ -292,11 +544,10 @@ For **Celery** debug.
 ```
 
 ## Samples
-![](/images/image1.png)
+Syntax-highlighted source listing, Rich pretty-printed objects and full
+`inspect` output — the three commands that most obviously distinguish
+`pdbr` from stock `pdb`:
 
-![](/images/image3.png)
-
-![](/images/image4.png)
+![samples](images/samples.svg)
 
 ### Traceback
-![](/images/image2.png)

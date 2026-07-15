@@ -1,14 +1,11 @@
+.PHONY: install lint test
+
+install:
+	poetry install --with dev --all-extras
+	poetry run pre-commit install
+
 lint:
-	sh scripts/lint
+	poetry run pre-commit run --all-files
 
 test:
-	sh scripts/test
-
-celery:
-	celery -A tasks worker --loglevel=info
-
-build:
-	docker build -t pdbr .
-
-act:
-	act -r -j test --container-architecture linux/amd64
+	poetry run pytest
