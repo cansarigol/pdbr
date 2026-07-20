@@ -19,11 +19,11 @@ repos:
     hooks:
       - id: vulture
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: '01a675ea018f2fb714478a5ffb83fcea8374bb06'  # frozen: v0.15.21
+    rev: '2700fd5671c633760d912769c041bfcde2b9a01b'  # frozen: v0.15.22
     hooks:
       - id: ruff
-  - repo: https://github.com/psf/black
-    rev: 87928e6d6761a4a6d22250e1fee5601b3998086e  # frozen: 26.5.1
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 4160603246a6b365d4a2af661c6d71b0a0f50478  # frozen: 26.5.1
     hooks:
       - id: black
         language_version: python3
