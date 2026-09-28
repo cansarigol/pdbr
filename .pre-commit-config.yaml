@@ -19,7 +19,7 @@ repos:
     hooks:
       - id: vulture
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: '2700fd5671c633760d912769c041bfcde2b9a01b'  # frozen: v0.15.22
+    rev: 'a56c0b927e6465d37cae3e97d35d4d18ab2b96cd'  # frozen: v0.16.9
     hooks:
       - id: ruff
   - repo: https://github.com/psf/black-pre-commit-mirror
